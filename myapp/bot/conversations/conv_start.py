@@ -77,21 +77,20 @@ async def set_default_1(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    match(update.message.text):
-        case "1 год":
-            history = 12*1
-        case "3 года":
-            history = 12*3
-        case "6 месяцев":
-            history = 6
-        case "5 лет":
-            history = 12*5
-        case _:
-            await update.message.reply_text(
-                "Ошибка, такой вариант не предусмотрен",
-                reply_markup=ReplyKeyboardRemove()
-            )
-            return HISTORY
+    if update.message.text == "1 год":
+        history = 12*1
+    elif update.message.text == "3 года":
+        history = 12*3
+    elif update.message.text == "6 месяцев":
+        history = 6
+    elif update.message.text =="5 лет":
+        history = 12*5
+    else:
+        await update.message.reply_text(
+            "Ошибка, такой вариант не предусмотрен",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return HISTORY
     UserManager.set_history_duration(update.effective_chat.id, history)
     reply_keyboard = OPTIONS_TREND
     reply_keyboard.append(['/default', '/cancel'])
@@ -118,15 +117,14 @@ async def set_default_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def set_custom_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    match(update.message.text):
-        case "За 1 месяц":
-            trend = 30
-        case "За 2 недели":
-            trend = 14
-        case "За 1 неделю":
-            trend = 7
-        case "За 2 дня":
-            trend = 2
+    if update.message.text == "За 1 месяц":
+        trend = 30
+    elif update.message.text == "За 2 недели":
+        trend = 14
+    elif update.message.text == "За 1 неделю":
+        trend = 7
+    elif update.message.text == "За 2 дня":
+        trend = 2
     UserManager.set_trend_period(update.effective_chat.id, trend)
     reply_keyboard = OPTIONS_SCHEDULE_DAYS
     reply_keyboard.append(['/default', '/cancel'])
@@ -153,15 +151,14 @@ async def set_default_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     
 async def set_custom_4(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    match(update.message.text):
-        case "Каждый день":
-            days = [1,2,3,4,5]
-        case "Пн Ср Пт":
-            days = [1,3,5]
-        case "Пн":
-            days = [1]
-        case "Никогда":
-            days = []
+    if update.message.text == "Каждый день":
+        days = [1,2,3,4,5]
+    elif update.message.text == "Пн Ср Пт":
+        days = [1,3,5]
+    elif update.message.text == "Пн":
+        days = [1]
+    elif update.message.text == "Никогда":
+        days = []
     UserManager.set_schedule_days(update.effective_chat.id, days)
     reply_keyboard = [['/default', '/cancel']]
     await update.message.reply_text(

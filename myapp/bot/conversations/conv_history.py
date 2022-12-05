@@ -39,21 +39,21 @@ async def set_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def set_custom(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    match(update.message.text):
-        case "1 год":
-            history = 12*1
-        case "3 года":
-            history = 12*3
-        case "6 месяцев":
-            history = 6
-        case "5 лет":
-            history = 12*5
-        case _:
-            await update.message.reply_text(
-                "Ошибка, такой вариант не предусмотрен",
-                reply_markup=ReplyKeyboardRemove()
-            )
-            return ConversationHandler.END
+    history = 12
+    if update.message.text == "1 год":
+        history = 12*1
+    elif update.message.text == "3 года":
+        history = 12*3
+    elif update.message.text == "6 месяцев":
+        history = 6
+    elif update.message.text == "5 лет":
+        history = 12*5
+    else:
+        await update.message.reply_text(
+            "Ошибка, такой вариант не предусмотрен",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return ConversationHandler.END
 
     UserManager.set_history_duration(update.effective_chat.id, history)
 

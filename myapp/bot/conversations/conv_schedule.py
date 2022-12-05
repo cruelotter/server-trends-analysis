@@ -42,15 +42,14 @@ async def set_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def set_custom_days(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    match(update.message.text):
-        case "Каждый день":
-            days = [1,2,3,4,5]
-        case "Пн Ср Пт":
-            days = [1,3,5]
-        case "Пн":
-            days = [1]
-        case "Никогда":
-            days = []
+    if update.message.text == "Каждый день":
+        days = [1,2,3,4,5]
+    elif update.message.text == "Пн Ср Пт":
+        days = [1,3,5]
+    elif update.message.text == "Пн":
+        days = [1]
+    elif update.message.text == "Никогда":
+        days = []
     # usr = UserManager.get_from_db(update.effective_chat.id)
     UserManager.set_schedule_days(update.effective_chat.id, days)
 

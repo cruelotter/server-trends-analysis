@@ -39,15 +39,14 @@ async def set_trend(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def set_custom(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    match(update.message.text):
-        case "За 1 месяц":
-            trend = 30
-        case "За 2 недели":
-            trend = 14
-        case "За 1 неделю":
-            trend = 7
-        case "За 2 дня":
-            trend = 2
+    if update.message.text == "За 1 месяц":
+        trend = 30
+    elif update.message.text == "За 2 недели":
+        trend = 14
+    elif update.message.text == "За 1 неделю":
+        trend = 7
+    elif update.message.text == "За 2 дня":
+        trend = 2
     # usr = UserManager.get_from_db(update.effective_chat.id)
     UserManager.set_trend_period(update.effective_chat.id, trend)
     # usr = User(update.effective_chat.id)
