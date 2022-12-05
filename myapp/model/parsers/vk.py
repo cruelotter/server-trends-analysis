@@ -61,7 +61,7 @@ class ParserVK(parser.Parser):
                     raise e
         return data
         
-    def get_source_data(self, chat_name, queue) -> list[dict]:
+    def get_source_data(self, chat_name, queue):
         _logger.warning(f"{chat_name}")
         data = self.get_history(chat_name, queue)
         # _logger.warning(f"{chat_name} {len(data)} parsed")

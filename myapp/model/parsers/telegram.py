@@ -52,7 +52,7 @@ class ParserTelegram(Parser):
         return count
         
     
-    async def get_history(self, chat_name: str, queue: list[date]) -> bool:
+    async def get_history(self, chat_name: str, queue) -> bool:
         # session = self.session
         # await session.start()
         res = True
@@ -119,7 +119,7 @@ class ParserTelegram(Parser):
         return res
     
        
-    def get_source_data(self, chat_name: str, queue: list[date]) -> bool:
+    def get_source_data(self, chat_name: str, queue) -> bool:
         
         _logger.warning(f"{chat_name}")
         # data = self.get_history(session, chat_name, start, end)
