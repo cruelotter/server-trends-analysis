@@ -60,7 +60,7 @@ class Pipeline:
         
         
     def check_existance(self):
-        parse_queue = defaultdict(Dict[list])
+        parse_queue = defaultdict(dict)
         process_queue = []
         for src_type in self.source_list.keys():
             for source in self.source_list[src_type]:
