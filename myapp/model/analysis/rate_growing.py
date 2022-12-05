@@ -149,7 +149,7 @@ def chunking(sources, end_date:datetime, history:int, remerge:Optional[bool]=Fal
 
    
 
-def calc_meams_df(sources: dict[list[str]], start_date: datetime, period:int, remerge=False, mcdm=True):
+def calc_meams_df(sources, start_date: datetime, period:int, remerge=False, mcdm=True):
     """calc_meams_df _summary_
     Счиатет среднее для каждого токена за всю историю и за последний месяц
 

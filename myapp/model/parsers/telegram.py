@@ -103,7 +103,7 @@ class ParserTelegram(Parser):
         return res
     
     
-    async def temp(self, chat_name: str, queue: list[date]):
+    async def temp(self, chat_name: str, queue):
         await self.start()
         res = await self.get_history(chat_name, queue)
         await self.stop()

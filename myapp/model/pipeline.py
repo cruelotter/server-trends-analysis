@@ -1,15 +1,12 @@
-import os
-import pickle
 import pandas as pd
 import numpy as np
-import pdfkit
-import itertools
 import pathlib
 # from weasyprint import HTML, CSS
 # from fpdf import FPDF
 from datetime import datetime, date, timedelta, time
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
+from typing import Dict
 
 from myapp.logging.logger import _logger
 from myapp.database.mongodb import MongoManager
@@ -63,7 +60,7 @@ class Pipeline:
         
         
     def check_existance(self):
-        parse_queue = defaultdict(dict[list])
+        parse_queue = defaultdict(Dict[list])
         process_queue = []
         for src_type in self.source_list.keys():
             for source in self.source_list[src_type]:
