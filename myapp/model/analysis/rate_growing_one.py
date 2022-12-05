@@ -42,7 +42,7 @@ def typed_read_csv(path: str) -> pd.DataFrame:
         return df
     
 def merge_one_token_data(source_dict: dict, token, month: datetime):
-    merged_df: pd.DataFrame = None
+    merged_df = None
     for type in source_dict.keys():
         for source in source_dict[type]:
             path = "./storage/data/{}/{}/{}/{}stats.csv".format(
@@ -78,7 +78,7 @@ def sum_merged_data(source_list: dict, month: datetime):
     Returns:
         pd.DataFrame|None: таблица, где для каждого источника суммарная статистика за месяц
     """        
-    merged_df: pd.DataFrame = None
+    merged_df = None
     for type in source_list.keys():
         for source in source_list[type]:
             path = "./storage/data/{}/{}/{}/{}stats.csv".format(
@@ -144,7 +144,7 @@ def chunking(sources, token, end_date:datetime, history:int, remerge:Optional[bo
     Returns:
         pd.DataFrame|None
     """    
-    sum_by_month: pd.DataFrame = None
+    sum_by_month = None
     # for start, end in zip(pd.date_range(end=datetime.now().replace(month=10), freq='M', periods=history), pd.date_range(end=datetime.now(), freq='M', periods=history)):
     for end in pd.date_range(end=end_date, freq='M', periods=history):
         # print(end)

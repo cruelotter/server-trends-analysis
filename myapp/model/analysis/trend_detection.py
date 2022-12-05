@@ -49,7 +49,7 @@ class TrendDetection:
     
     
     @staticmethod
-    def sum_merged_data(source_list, month: datetime) -> pd.DataFrame|None:
+    def sum_merged_data(source_list, month: datetime):
         """sum_merged_data
         Соединяет предобработанные данные для всех источников за конкретный месяц в одну таблицу, суммирует данные для каждого токена
 
@@ -60,7 +60,7 @@ class TrendDetection:
         Returns:
             pd.DataFrame|None: таблица, где для каждого источника суммарная статистика за месяц
         """        
-        merged_df: pd.DataFrame = None
+        merged_df = None
              
         for type in source_list.keys():
             for source in source_list[type]:
@@ -154,7 +154,7 @@ class TrendDetection:
         Returns:
             pd.DataFrame|None
         """    
-        sum_by_month: pd.DataFrame = None
+        sum_by_month = None
         
         for date in pd.date_range(end=window_end_period, freq='M', periods=history):
             path = f'./storage/chunks/{date.year}/{str.zfill(str(date.month),2)}chunk.csv'
