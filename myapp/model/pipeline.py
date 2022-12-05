@@ -24,13 +24,13 @@ class Pipeline:
     history_end: date
     history_start: date
     trend_window: int
-    source_list: dict[str, list[str]]
+    source_list: dict
     db = MongoManager.get_instance()
     preprocessing = Preprocessing()
     detection = TrendDetection()
     
     @staticmethod
-    def check_source_list(source_list: str) -> dict[str, list[str]]:
+    def check_source_list(source_list: str):
         typed_source_list = defaultdict(list)
         for link in source_list.split():
             try:

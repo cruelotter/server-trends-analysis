@@ -84,12 +84,12 @@ class Preprocessing:
         return counter
     
 
-    def raw_to_stats(self, raw_data: list[dict], path):
+    def raw_to_stats(self, raw_data, path):
         """raw_to_stats
         Данные после лемматизации собираются в таблицу с колонками 'token', 'date', 'frequency', 'views', 'reactions'
 
         Args:
-            raw_data (list[dict]): Исходные данные постов в виде списка словарей, где каждый словарь имеет вид: 
+            raw_data (List[dict]): Исходные данные постов в виде списка словарей, где каждый словарь имеет вид: 
                 {'ref' : id поста,
                 'text' : txt,
                 'date' : дата публикации,

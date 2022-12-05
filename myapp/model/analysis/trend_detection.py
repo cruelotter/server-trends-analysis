@@ -49,7 +49,7 @@ class TrendDetection:
     
     
     @staticmethod
-    def sum_merged_data(source_list: dict[list[str]], month: datetime) -> pd.DataFrame|None:
+    def sum_merged_data(source_list, month: datetime) -> pd.DataFrame|None:
         """sum_merged_data
         Соединяет предобработанные данные для всех источников за конкретный месяц в одну таблицу, суммирует данные для каждого токена
 
@@ -184,7 +184,7 @@ class TrendDetection:
 
 
     @staticmethod
-    def mean_differance(sources: dict[list[str]], current_date, period:int) -> pd.DataFrame:
+    def mean_differance(sources: dict, current_date, period:int) -> pd.DataFrame:
         sum_means = TrendDetection.chunking(sources, current_date, period)
         sum_means = sum_means.mean(axis=0).to_frame(name='previous')
         _logger.info('sum_means done')
@@ -211,7 +211,7 @@ class TrendDetection:
 
     @staticmethod
     def rename_columns(df: pd.DataFrame):
-        words:list[dict] = map(TrendDetection.token_to_word, df.columns)
+        words = map(TrendDetection.token_to_word, df.columns)
         new_columns = {}
         for i in words:
             new_columns.update(i) 

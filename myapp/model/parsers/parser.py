@@ -12,7 +12,7 @@ class Parser(object):
     def __init__(self) -> None:
         self.preprocessor = Preprocessing()
  
-    def save_and_clear(self, raw_data: list[dict], source: str, date: date):
+    def save_and_clear(self, raw_data, source: str, date: date):
         path = "./storage/data/{}/{}/{}/{}".format(self.type, source, date.year, str(date.month).zfill(2))
         os.makedirs(path[:-3], exist_ok=True)
         with open(file=path+"raw.pkl", mode="wb") as file:
