@@ -1,0 +1,14 @@
+[telegram-parser]
+# api_id - Your Telegram API ID, get it here: https://my.telegram.org/apps
+api_id = 13418353
+# api_hash - Your Telegram API ID hash, get it here: https://my.telegram.org/apps
+api_hash = '674b3c83a894f69d9c68b48a7dae7600'
+# Your phone number in international format (with +). Used to authenticate to Telegram
+phone = '+79097880708'
+[telegram-bot]
+bot_token = '5394748526:AAEXQ4exRkVpWeX5toxt6NZLeEejrfvDDJo'
+[vk]
+# Your login to vk.com, better use phone number in international format(with +)
+login = '+79097880708'
+# Your password to vk.com. Used to authenticate to vk.com and get access_token
+password = 'blackUniCorn0066'

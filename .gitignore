@@ -1,0 +1,9 @@
+*.csv
+!ref.csv
+*.pkl
+*.json
+*.png
+*.pyc
+venv/
+trend_analysis.egg-info/
+__pycache__/
