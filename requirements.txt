@@ -2,6 +2,7 @@ numpy
 pandas
 python-telegram-bot==20.0a4
 asyncio
+nest_asyncio
 toml
 bson
 pyrogram
