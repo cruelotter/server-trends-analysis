@@ -271,7 +271,7 @@ class TrendDetection:
     def get_top_data(source_dict: dict, process: list, period: int, trend_window: int, number:int):
         start_date = datetime.now()
         
-        df = TrendDetection.mean_differance(source_dict, start_date, period, remerge=True, mcdm=True)
+        df = TrendDetection.mean_differance(source_dict, start_date, period, remerge=True, mcdm=False)
         TrendDetection.mean_score_ratio(df, 1)
         
         df.sort_values(by='growth', ascending=False, inplace=True)

@@ -6,7 +6,6 @@ import pathlib
 from datetime import datetime, date, timedelta, time
 from dateutil.relativedelta import relativedelta
 from collections import defaultdict
-from typing import Dict
 
 from myapp.logging.logger import _logger
 from myapp.database.mongodb import MongoManager
@@ -74,14 +73,18 @@ class Pipeline:
                         'processed_data',
                         {"type": src_type, "source": source, "year": start.year, "month": start.month}
                         )
-                    if cur is None:
-                        parse_queue[src_type][source].append(start)
-                        MongoManager.insert_data(
-                        'processed_data',
-                        {"type": src_type, "source": source, "year": start.year, "month": start.month, "full": datetime.now().isoformat()}
-                    )
-                    # elif datetime.fromisoformat(cur["full"]) < datetime.combine(datetime.now().date(), time(0,0)):
-                    #     parse_queue[src_type][source].append(start)
+                    try:
+                        if cur is None:
+                            parse_queue[src_type][source].append(start)
+                            # MongoManager.insert_data(
+                            # 'processed_data',
+                            # {"type": src_type, "source": source, "year": start.year, "month": start.month, "full": datetime.now().isoformat()}
+                        # )
+                        elif cur["full"] < datetime.combine(datetime.now().date(), time(0,0)):
+                            parse_queue[src_type][source].append(start)
+                    except:
+                        if datetime.fromisoformat(cur["full"]) < datetime.combine(datetime.now().date(), time(0,0)):
+                            parse_queue[src_type][source].append(start)
                         # parse_queue[src_type].append((path,[source, start, start + relativedelta(months=1)]))
 
                     start += relativedelta(months=1)
@@ -198,7 +201,7 @@ class Pipeline:
         path = pathlib.Path("/home/cruelotter/sber/trends_analysis/storage/img/all.png").as_uri()
         header = '<div><h1>Отчет</h1><p>История c {} по {}</p><p>Выделять тренд за {} дня(ей)</p><p>Источники:</p><ul>{}</ul><img src="{}"/></div>'.format(self.history_start, self.history_end, self.trend_window, li_sources, path)
         
-        preview_list = "".join([f'<li>{s}</li>' for s in top['word'].tolist()])
+        preview_list = "".join([f'<li>{s}</li>' for s in top['word'].tolist()]) #!###############################################
         preview = '<div><p>Выявленные тренды:</p><ol>{}</ol></div>'.format(preview_list)
         
         body = ""
@@ -283,18 +286,19 @@ class Pipeline:
 if __name__=="__main__":
     
     
-    sources =['t.me/FinZoZhExpert', 't.me/investorbiz', 't.me/Reddit',
-                't.me/tinkoff_invest_official', 't.me/coinkeeper', 't.me/vcnews',
-                'vk.com/nrnews24', 'vk.com/noboring_finance',
-                'https://journal.tinkoff.ru/flows/business-russia/', 'https://journal.tinkoff.ru/flows/crisis/',
-                'https://journal.tinkoff.ru/flows/edu-news/', 'https://journal.tinkoff.ru/flows/opinion/',
-                'https://journal.tinkoff.ru/flows/readers-travel/', 'https://journal.tinkoff.ru/flows/culture/', 
-                'https://journal.tinkoff.ru/flows/hobby/']
+    sources =['t.me/FinZoZhExpert', 't.me/investorbiz',]
+            #   't.me/Reddit',
+            #     't.me/tinkoff_invest_official', 't.me/coinkeeper', 't.me/vcnews',
+            #     'vk.com/nrnews24', 'vk.com/noboring_finance',
+            #     'https://journal.tinkoff.ru/flows/business-russia/', 'https://journal.tinkoff.ru/flows/crisis/',
+            #     'https://journal.tinkoff.ru/flows/edu-news/', 'https://journal.tinkoff.ru/flows/opinion/',
+            #     'https://journal.tinkoff.ru/flows/readers-travel/', 'https://journal.tinkoff.ru/flows/culture/', 
+            #     'https://journal.tinkoff.ru/flows/hobby/']
     
     # sources = ['t.me/FinZoZhExpert', 't.me/investorbiz', 't.me/Reddit',
     #               't.me/tinkoff_invest_official', 't.me/coinkeeper', 't.me/vcnews']
     sources = " ".join(sources)
-    pip = Pipeline(957739166, 12, 14, sources)
+    pip = Pipeline(957739166, 3, 14, sources)
     pip.run()
     print('job finished')
     

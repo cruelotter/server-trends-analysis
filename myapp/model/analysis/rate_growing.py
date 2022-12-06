@@ -7,7 +7,6 @@ from dateutil.relativedelta import relativedelta
 from pymcdm import methods as mcdm_methods
 from pymcdm import weights as mcdm_weights
 from sklearn import linear_model
-from typing import Optional
 from myapp.database.mongodb import MongoManager
 from myapp.model.analysis.trend_detection import TrendDetection
 from myapp.logging.logger import _logger
@@ -105,7 +104,7 @@ def rearrange_freq_only(df):
     return res    
 
 
-def chunking(sources, end_date:datetime, history:int, remerge:Optional[bool]=False, mcdm:Optional[bool]=True):
+def chunking(sources, end_date:datetime, history:int, remerge:bool=False, mcdm:bool=True):
     """chunking _summary_
 
     Args:

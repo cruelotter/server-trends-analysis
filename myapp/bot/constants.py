@@ -37,7 +37,7 @@ DEFAULT_SOURCES =['t.me/FinZoZhExpert', 't.me/investorbiz', 't.me/Reddit',
                   't.me/tinkoff_invest_official', 't.me/coinkeeper', 't.me/vcnews',
                   'vk.com/nrnews24', 'vk.com/noboring_finance',
                   'https://journal.tinkoff.ru/flows/business-russia/', 'https://journal.tinkoff.ru/flows/crisis/',
-                  'https://journal.tinkoff.ru/flows/edu-news/', 'https://journal.tinkoff.ru/flows/opinion/',]
+                  'https://journal.tinkoff.ru/flows/edu-news/', 'https://journal.tinkoff.ru/flows/opinion/', 'https://journal.tinkoff.ru/flows/hobby/']
     # 'https://journal.tinkoff.ru/flows/business-opinion/',
     # 'https://journal.tinkoff.ru/flows/opinion/',]
     # 'https://journal.tinkoff.ru/flows/podrabotka/',
