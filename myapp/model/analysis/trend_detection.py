@@ -336,7 +336,8 @@ class TrendDetection:
         sns.set_theme(style="darkgrid")
         sns.lineplot(token_stats)
         plt.xticks(rotation=15)
-        plt.savefig(f'.storage/img/img_{token}.png')
+        plt.savefig(f'storage/img/img_{token}.png')
+        _logger.warning(f"img_{token} saved")
         plt.close()
         
         return token_stats
@@ -346,7 +347,7 @@ class TrendDetection:
         sns.set_theme(style="darkgrid")
         sns.lineplot(stats, dashes=False)
         plt.xticks(rotation=15)
-        plt.savefig('.storage/img/all.png')
+        plt.savefig('storage/img/all.png')
         plt.close()
     
     #! ==========================================================================================================
@@ -364,23 +365,24 @@ class TrendDetection:
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
         df = df[['word', 'previous', 'current', 'growth']]
         all_stats: pd.DataFrame = None
+        os.makedirs('storage/img')
         for tok in df.index.to_numpy():
             # print(tok)
             u = TrendDetection.usage(tok, set(), start_date)
             with open(f'usage_{tok}.json', 'w', encoding='utf-8') as file:
                 pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
-            del u
             
-            #! for one token
+            
             one_stat = TrendDetection.one_token_graph(source_dict, start_date, period, tok)
             print(tok, "img")
+            print(one_stat)
             if all_stats is None:
                 all_stats = one_stat
             else:
                 all_stats = pd.concat([all_stats, one_stat])
                 print(one_stat)
             
-            #!
+            
         print(all_stats.info())
         TrendDetection.top_token_stats(all_stats)
             
