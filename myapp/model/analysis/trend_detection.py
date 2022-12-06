@@ -373,12 +373,15 @@ class TrendDetection:
             
             #! for one token
             one_stat = TrendDetection.one_token_graph(source_dict, start_date, period, tok)
+            print(tok, "img")
             if all_stats is None:
                 all_stats = one_stat
             else:
                 all_stats = pd.concat([all_stats, one_stat])
+                print(one_stat)
             
             #!
+        print(all_stats.info())
         TrendDetection.top_token_stats(all_stats)
             
         print(df.round(2))
