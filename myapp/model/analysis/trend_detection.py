@@ -80,7 +80,7 @@ class TrendDetection:
             merged_df = merged_df.groupby(['token']).agg({'frequency':'sum', 'views':'mean', 'reactions':'mean'})
             merged_df['date'] = month
         except Exception as e:
-            _logger.warning(e)
+            _logger.warning(e, month)
         return merged_df
     
     

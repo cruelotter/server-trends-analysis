@@ -60,14 +60,14 @@ class ParserTinkoff(Parser):
 
         
         
-    def get_posts(self, page: BeautifulSoup, queue, chat_name):
+    def get_posts(self, page: BeautifulSoup, queue, chat_name, posts):
         # news = page.find_all('a', class_="link--sKzdE")
         cards = page.find_all('div', class_=re.compile("^card--\S+"))
         headers = [c.find('div', class_=re.compile("^header--\S+")) for c in cards]
         # headers = cards.find_all('div', class_=re.compile("^header--\S+"))
         news =[h.find('a', class_=re.compile("^link--\S+")) for h in headers]
 
-        posts = []
+        # posts = []
         current_month = queue[-1]
         for link in news:
             try:
@@ -123,22 +123,23 @@ class ParserTinkoff(Parser):
                     #     pickle.dump(post, f)  
             except:
                     _logger.error('Could not get url')
-        if posts!=[]:
-            self.save_and_clear(posts, chat_name, current_month)
+        # if posts!=[]:
+            # print(current_month)
+            # self.save_and_clear(posts, chat_name, current_month)
         return False, posts
 
 
     def get_history(self, channel: str, queue):
         url_list = [f"/flows/{channel}"]
-        # data = []
+        data = []
         while len(url_list)>0:
             url = url_list.pop()
             _logger.info(f'https://journal.tinkoff.ru{url}/')
             r = requests.get(f'https://journal.tinkoff.ru{url}/')
             page = BeautifulSoup(r.text, 'html.parser')
             
-            out_date, posts = self.get_posts(page, queue, channel)
-            # data.extend(posts)
+            out_date, posts = self.get_posts(page, queue, channel, data)
+            data.extend(posts)
             del posts
             
             if out_date:
