@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pathlib
+import os
 # from weasyprint import HTML, CSS
 # from fpdf import FPDF
 from datetime import datetime, date, timedelta, time
@@ -209,7 +210,7 @@ class Pipeline:
         body = ""
         # p_unique = set()
         for row in top.itertuples():
-            print(f'page: {row[0]}')
+            print(f'page: {row[1]}')
             # use = self.usage(old[i], p_unique)
             # example_posts = ""
             # for post in use:
@@ -228,6 +229,7 @@ class Pipeline:
         
         s = html_head + html_body.format(header, preview, body)
         print(path)
+        os.makedirs(f"./storage/reports", exist_ok=True)
         with open(f'{path}.html', 'w') as f:
             f.write(s)
         # html = HTML(string=s, base_url="/trends_analysis")

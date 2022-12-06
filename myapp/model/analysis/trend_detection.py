@@ -282,7 +282,7 @@ class TrendDetection:
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
         df = df[['word', 'previous', 'current', 'growth']]
         for tok in df.index.to_numpy():
-            print(tok)
+            # print(tok)
             u = TrendDetection.usage(tok, set(), start_date)
             with open(f'usage_{tok}.json', 'w', encoding='utf-8') as file:
                 pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
