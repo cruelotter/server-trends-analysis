@@ -35,8 +35,11 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources])
     pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources)
     file, trends = pipeline.run()
+    string_trend_list = ""
+    for i,word in enumerate(trends['word'].tolist(), start=1):
+        string_trend_list += f"{i}. {word}\n"
     await context.bot.send_document(chat_id, document=open(file+".html", 'rb'),
-                                    caption=trends.to_string(),
+                                    caption=string_trend_list,
                                     reply_markup=ReplyKeyboardMarkup(
             [['/get_trends']], resize_keyboard=True
         ))

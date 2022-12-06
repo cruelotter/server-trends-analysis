@@ -191,7 +191,7 @@ class Pipeline:
         html_body = 'html<body>{}{}{}</body></html>'
         page_str = '<div><h2>{}</h2><img src="{}"/><h2>Примеры постов:</h2>{}</div>'
         # page_str = '<div><h2>{}</h2><img src="{}"/></div>'
-        post_str = '<h3>{}</h3><p>{}</p>'
+        # post_str = '<h3>{}</h3><p>{}</p>'
         
         _logger.warning('PDF is creating')
         usr = UserManager.get_from_db(self.user_id)
@@ -199,7 +199,7 @@ class Pipeline:
         for s in usr.sources.split():
             li_sources += f'<li>{s}</li>'
         
-        path = pathlib.Path("/home/cruelotter/sber/trends_analysis/storage/img/all.png").as_uri()
+        path = pathlib.Path("/home/server-trends-analysis/storage/img/all.png").as_uri()
         header = '<div><h1>Отчет</h1><p>История c {} по {}</p><p>Выделять тренд за {} дня(ей)</p><p>Источники:</p><ul>{}</ul><img src="{}"/></div>'.format(self.history_start, self.history_end, self.trend_window, li_sources, path)
         
         preview_list = "".join([f'<li>{s}</li>' for s in top['word'].tolist()]) #!###############################################
@@ -221,9 +221,13 @@ class Pipeline:
             import json
             with open(f'usage_{row[0]}.json', 'r', encoding='utf-8') as file:
                 use = json.load(file)
-            if len(use)>3: use = use[:3]
+            if len(use)>3: use = use[:2]
+            html_examples=""
+            for use_post in use:
+                html_examples += f"<h3>{use_post['path'][15:-8]}</h3><p>{use_post['date'][:-13]}</p><p>{use_post['text']}</p>"
             
-            body += page_str.format(row[1], path, str(use))
+            path = pathlib.Path(f"/home/server-trends-analysis/storage/img/img_{row[0]}.png").as_uri()
+            body += page_str.format(row[1], path, html_examples)
             print('ok')
         path = f"./storage/reports/report_{int(datetime.now().timestamp())}"
         

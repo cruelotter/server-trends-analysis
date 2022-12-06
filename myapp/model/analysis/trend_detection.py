@@ -268,6 +268,88 @@ class TrendDetection:
         del docs
         return res
 
+    #! ==========================================================================================================
+    @staticmethod
+    def merge_one_token_data(source_dict: dict, token, month: datetime):
+        merged_df = None
+        for type in source_dict.keys():
+            for source in source_dict[type]:
+                path = "./storage/data/{}/{}/{}/{}stats.csv".format(
+                    type, source, month.year, str(month.month).zfill(2))
+                
+                new_df = TrendDetection.typed_read_csv(path)
+                # print(new_df.head(5).to_string())
+                if new_df is not None:
+                    new_df = new_df.loc[new_df['token']==token]
+                    if (merged_df is None):
+                        merged_df = new_df
+                    else:
+                        merged_df = pd.concat([merged_df, new_df], ignore_index=True)
+                        merged_df.reset_index(inplace=True, drop=True)
+        try:
+            # print(len(merged_df.index))
+            merged_df = merged_df.groupby(['token']).agg({'frequency':'sum', 'views':'mean', 'reactions':'mean'})
+            # print(merged_df.head(5).to_string())
+            merged_df['date'] = month
+        except Exception as e:
+            _logger.debug(e)
+        return merged_df
+    
+    
+    @staticmethod
+    def chunking_one(sources, token, end_date:datetime, history:int, remerge:bool=True, mcdm:bool=False):
+        sum_by_month = None
+        for end in pd.date_range(end=end_date, freq='M', periods=history):
+            path = f'./storage/chunks/{end.year}/{str.zfill(str(end.month),2)}chunk.csv'
+            if remerge:
+                window_df = TrendDetection.merge_one_token_data(sources, token, end)
+            else:
+                window_df = pd.read_csv(path, index_col=0)
+            if window_df is not None:
+                if(len(window_df)!=0):
+                    if sum_by_month is None:
+                        sum_by_month = window_df
+                    else:
+                        sum_by_month = pd.concat([sum_by_month, window_df])
+            else:
+                window_df = pd.DataFrame({'token': token, 'frequency': 0, 'views':0.0, 'reactions':0.0})
+                if sum_by_month is None:
+                        sum_by_month = window_df
+                else:
+                    sum_by_month = pd.concat([sum_by_month, window_df])
+
+        if sum_by_month is not None:
+            sum_by_month.fillna(0, inplace=True)
+            sum_by_month.reset_index(inplace=True)
+            if mcdm:
+                return TrendDetection.mcdm_score(sum_by_month)
+            else:
+                sum_by_month.drop(['views', 'reactions'], axis=1, inplace=True)
+                return TrendDetection.rearrange_freq_only(sum_by_month)
+        else:
+            return None
+        
+        
+    def one_token_graph(sources, current_date, period):
+        token_stats = TrendDetection.chunking_one(sources, current_date+timedelta(days=30), period)
+        plt.figure(clear=True, figsize=(15,8))
+        sns.set_theme(style="darkgrid")
+        sns.lineplot(token_stats)
+        plt.xticks(rotation=15)
+        plt.savefig('.storage/img/img_{token}')
+        plt.close()
+        
+        return token_stats
+    
+    def top_token_stats(stats):
+        plt.figure(clear=True, figsize=(15,8))
+        sns.set_theme(style="darkgrid")
+        sns.lineplot(stats)
+        plt.xticks(rotation=15)
+        plt.savefig('.storage/img/all')
+        plt.close()
+    
+    #! ==========================================================================================================
     
     
     @staticmethod
@@ -281,11 +363,24 @@ class TrendDetection:
         df = df.iloc[:number]
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
         df = df[['word', 'previous', 'current', 'growth']]
+        all_stats: pd.DataFrame = None
         for tok in df.index.to_numpy():
             # print(tok)
             u = TrendDetection.usage(tok, set(), start_date)
             with open(f'usage_{tok}.json', 'w', encoding='utf-8') as file:
                 pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
+            del u
+            
+            #! for one token
+            one_stat = TrendDetection.one_token_graph(source_dict, start_date, period)
+            if all_stats is None:
+                all_stats = one_stat
+            else:
+                all_stats = pd.concat([all_stats, one_stat])
+            
+            #!
+        TrendDetection.top_token_stats(all_stats)
+            
         print(df.round(2))
         print(df.info())
         return df.round(2)
