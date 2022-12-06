@@ -204,11 +204,11 @@ class Pipeline:
         preview_list = "".join([f'<li>{s}</li>' for s in top['word'].tolist()]) #!###############################################
         preview = '<div><p>Выявленные тренды:</p><ol>{}</ol></div>'.format(preview_list)
         
-        top_np = top.to_numpy()
-        print(top_np)
+        # top_np = top.to_numpy()
+        # print(top_np)
         body = ""
-        p_unique = set()
-        for row in top_np:
+        # p_unique = set()
+        for row in top.itertuples():
             print(f'page: {row[0]}')
             # use = self.usage(old[i], p_unique)
             # example_posts = ""

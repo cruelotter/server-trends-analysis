@@ -146,7 +146,7 @@ class ParserTinkoff(Parser):
                 print("not outdated")
                 # nav = page.find('div', class_='paginator--dEqKc')
                 nav = page.find('div', class_=re.compile("^paginator--\S+"))
-                print(nav)
+                # print(nav)
                 if nav is not None:
                     # next = nav.find('a', class_='next--Lf8_A')
                     next = nav.find('a', class_=re.compile("^next--\S+"))
