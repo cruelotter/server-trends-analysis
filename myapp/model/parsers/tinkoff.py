@@ -140,16 +140,18 @@ class ParserTinkoff(Parser):
             
             out_date, posts = self.get_posts(page, queue, channel, data)
             data.extend(posts)
-            del posts
+            # del posts
             
-            if out_date:
+            if not out_date:
                 # nav = page.find('div', class_='paginator--dEqKc')
                 nav = page.find('div', class_=re.compile("^paginator--\S+"))
+                print(nav)
                 if nav is not None:
                     # next = nav.find('a', class_='next--Lf8_A')
                     next = nav.find('a', class_=re.compile("^next--\S+"))
                     if next.get("data-disabled") == "false":
                         url_list.append(next.get("href"))
+                        print(url_list)
                 
         return True
         
