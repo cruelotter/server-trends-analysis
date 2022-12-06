@@ -330,13 +330,13 @@ class TrendDetection:
             return None
         
         
-    def one_token_graph(sources, current_date, period):
-        token_stats = TrendDetection.chunking_one(sources, current_date+timedelta(days=30), period)
+    def one_token_graph(sources, current_date, period, token):
+        token_stats = TrendDetection.chunking_one(sources, token, current_date+timedelta(days=30), period)
         plt.figure(clear=True, figsize=(15,8))
         sns.set_theme(style="darkgrid")
         sns.lineplot(token_stats)
         plt.xticks(rotation=15)
-        plt.savefig('.storage/img/img_{token}')
+        plt.savefig(f'.storage/img/img_{token}')
         plt.close()
         
         return token_stats
@@ -344,7 +344,7 @@ class TrendDetection:
     def top_token_stats(stats):
         plt.figure(clear=True, figsize=(15,8))
         sns.set_theme(style="darkgrid")
-        sns.lineplot(stats)
+        sns.lineplot(stats, dashes=False)
         plt.xticks(rotation=15)
         plt.savefig('.storage/img/all')
         plt.close()
@@ -372,7 +372,7 @@ class TrendDetection:
             del u
             
             #! for one token
-            one_stat = TrendDetection.one_token_graph(source_dict, start_date, period)
+            one_stat = TrendDetection.one_token_graph(source_dict, start_date, period, tok)
             if all_stats is None:
                 all_stats = one_stat
             else:
