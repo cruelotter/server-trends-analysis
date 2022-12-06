@@ -365,7 +365,7 @@ class TrendDetection:
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
         df = df[['word', 'previous', 'current', 'growth']]
         all_stats: pd.DataFrame = None
-        os.makedirs('storage/img')
+        os.makedirs('storage/img', exist_ok=True)
         for tok in df.index.to_numpy():
             # print(tok)
             u = TrendDetection.usage(tok, set(), start_date)

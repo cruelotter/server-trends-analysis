@@ -100,6 +100,7 @@ class Pipeline:
             for source in parse_queue[type].keys():
                 try:
                     print(source)
+                    print(parse_queue[type][source])
                     # os.makedirs(path[:-3], exist_ok=True)
                     if parse_queue[type][source] == []:
                         _logger.warning('Nothing to parse')
