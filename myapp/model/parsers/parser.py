@@ -24,18 +24,18 @@ class Parser(object):
         raw_data.clear()
         raw_data = []
         
-        if raw_data!=[]:
-            MongoManager.update_data(
-                'processed_data',
-                {"type": self.type, "source": source, "year": date.year, "month": date.month}, 
-                {"full": datetime.now()}
-            )
-        else:
-            MongoManager.update_data(
-                'processed_data',
-                {"type": self.type, "source": source, "year": date.year, "month": date.month}, 
-                {"full": datetime(1900, 1,1)}
-            )
+        # if raw_data!=[]:
+        MongoManager.update_data(
+            'processed_data',
+            {"type": self.type, "source": source, "year": date.year, "month": date.month}, 
+            {"full": datetime.now()}
+        )
+        # else:
+        #     MongoManager.update_data(
+        #         'processed_data',
+        #         {"type": self.type, "source": source, "year": date.year, "month": date.month}, 
+        #         {"full": datetime(1900, 1,1)}
+        #     )
     
     def get_source_data(self, chat_name: str, queue):
         pass

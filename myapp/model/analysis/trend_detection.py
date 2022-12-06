@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import spacy
+# import spacy
+import os
 import matplotlib.pyplot as plt
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
@@ -161,6 +162,7 @@ class TrendDetection:
             
             if remerge:
                 window_df = TrendDetection.sum_merged_data(sources, date)
+                os.makedirs(f'./storage/chunks/{date.year}', exist_ok=True)
                 window_df.to_csv(path)
             else:
                 window_df = pd.read_csv(path, index_col=0)

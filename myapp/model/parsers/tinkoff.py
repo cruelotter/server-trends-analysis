@@ -152,7 +152,7 @@ class ParserTinkoff(Parser):
     def get_source_data(self, chat_name: str, queue):
         _logger.warning(f"{chat_name}")
         data = self.get_history(chat_name, queue)
-        _logger.warning(f"{chat_name} {len(data)} parsed")
+        _logger.warning(f"{chat_name} parsed")
         return data
     
     
