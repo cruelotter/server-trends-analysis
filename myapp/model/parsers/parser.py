@@ -15,6 +15,7 @@ class Parser(object):
     def save_and_clear(self, raw_data, source: str, date: date):
         path = "./storage/data/{}/{}/{}/{}".format(self.type, source, date.year, str(date.month).zfill(2))
         os.makedirs(path[:-3], exist_ok=True)
+        print(path)
         with open(file=path+"raw.pkl", mode="wb") as file:
             pickle.dump(raw_data, file)
             

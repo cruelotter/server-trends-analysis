@@ -86,6 +86,7 @@ class ParserTinkoff(Parser):
                     c = msg_date.replace(day=1)
                     if current_month != c:
                         # print('cur', current_month)
+                        print(msg_date)
                         self.save_and_clear(posts, chat_name, current_month)
                         current_month = msg_date.replace(day=1)
 
@@ -112,6 +113,7 @@ class ParserTinkoff(Parser):
                             }
                             posts.append(post)
                     elif msg_date < queue[0]:
+                        print(msg_date, queue[0])
                         self.save_and_clear(posts, chat_name, current_month)
                         return True, posts
                     else: continue
@@ -121,6 +123,8 @@ class ParserTinkoff(Parser):
                     #     pickle.dump(post, f)  
             except:
                     _logger.error('Could not get url')
+        if posts!=[]:
+            self.save_and_clear(posts, chat_name, current_month)
         return False, posts
 
 
