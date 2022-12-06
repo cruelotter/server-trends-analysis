@@ -204,10 +204,12 @@ class Pipeline:
         preview_list = "".join([f'<li>{s}</li>' for s in top['word'].tolist()]) #!###############################################
         preview = '<div><p>Выявленные тренды:</p><ol>{}</ol></div>'.format(preview_list)
         
+        top_np = top.to_numpy()
+        print(top_np)
         body = ""
         p_unique = set()
-        for row in top.iterrows():
-            print(f'page: {row.index}')
+        for row in top_np:
+            print(f'page: {row[0]}')
             # use = self.usage(old[i], p_unique)
             # example_posts = ""
             # for post in use:
@@ -216,11 +218,11 @@ class Pipeline:
                 
             # path = pathlib.Path(f"/home/cruelotter/sber/trends_analysis/storage/img/history_{old[i]}.png").as_uri()
             import json
-            with open(f'usage_{row.index}.json', 'r', encoding='utf-8') as file:
+            with open(f'usage_{row[0]}.json', 'r', encoding='utf-8') as file:
                 use = json.load(file)
             if len(use)>3: use = use[:3]
             
-            body += page_str.format(row['word'], path, str(use))
+            body += page_str.format(row[1], path, str(use))
             print('ok')
         path = f"./storage/reports/report_{int(datetime.now().timestamp())}"
         
