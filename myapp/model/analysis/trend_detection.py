@@ -224,14 +224,15 @@ class TrendDetection:
     def read_pkl(path, ref):
         '''Чтение pickle исходника, поиск конкретного поста'''
         l_raw = pd.read_pickle(path)
-        # print(l_raw)
-        raw = pd.DataFrame(l_raw)
-        raw['ref'] = raw['ref'].astype(object)
-        # print(raw.head(3).to_string())
         if l_raw == []:
             _logger.warning(f'Empty source file {path}')
             return []
+        # print(l_raw)
         else:
+            raw = pd.DataFrame(l_raw)
+            raw['ref'] = raw['ref'].astype(object)
+        # print(raw.head(3).to_string())
+        
             found = raw.loc[raw['ref']==ref]
             # txt = found['text'].to_numpy()
             try:
