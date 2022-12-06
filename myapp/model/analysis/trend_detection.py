@@ -141,7 +141,7 @@ class TrendDetection:
         
         
     @staticmethod
-    def chunking(sources, window_end_period:datetime, history:int, remerge:bool=False, mcdm:bool=True) -> pd.DataFrame:
+    def chunking(sources, window_end_period:datetime, history:int, remerge:bool=True, mcdm:bool=False) -> pd.DataFrame:
         """chunking _summary_
 
         Args:
@@ -184,12 +184,12 @@ class TrendDetection:
 
 
     @staticmethod
-    def mean_differance(sources: dict, current_date, period:int) -> pd.DataFrame:
-        sum_means = TrendDetection.chunking(sources, current_date, period)
+    def mean_differance(sources: dict, current_date, period:int, remerge=True, mcdm=False) -> pd.DataFrame:
+        sum_means = TrendDetection.chunking(sources, current_date, period, remerge, mcdm)
         sum_means = sum_means.mean(axis=0).to_frame(name='previous')
         _logger.info('sum_means done')
 
-        cur_mean = TrendDetection.chunking(sources, current_date+timedelta(days=30), 1)
+        cur_mean = TrendDetection.chunking(sources, current_date+timedelta(days=30), 1, remerge, mcdm)
         cur_mean = cur_mean.mean(axis=0).to_frame(name='current')
         _logger.info('current_mean done')
 

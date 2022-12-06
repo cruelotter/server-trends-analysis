@@ -70,60 +70,63 @@ class ParserTinkoff(Parser):
         posts = []
         current_month = queue[-1]
         for link in news:
-            url = link.get('href')
-            _logger.info(f'https://journal.tinkoff.ru{url}')
-            r = requests.get(f'https://journal.tinkoff.ru{url}')
             try:
-                post = BeautifulSoup(r.text, 'html.parser')
+                url = link.get('href')
+                _logger.info(f'https://journal.tinkoff.ru{url}')
             
-                header = post.find('div', class_='article-header__meta')
-                header_meta = header.find('div', attrs={'data-component-name':'articleHeaderMeta'}).get('data-component-data')
-                meta = json.loads(header_meta)
-                meta_date = meta['date']
-                msg_date = datetime.strptime(meta_date[:10], '%Y-%m-%d').date()
-                c = msg_date.replace(day=1)
-                if current_month != c:
-                    # print('cur', current_month)
-                    self.save_and_clear(posts, chat_name, current_month)
-                    current_month = msg_date.replace(day=1)
+                r = requests.get(f'https://journal.tinkoff.ru{url}')
+                try:
+                    post = BeautifulSoup(r.text, 'html.parser')
 
-                if current_month in queue:
-                    stats = meta['stats']
-                    text = []
-                    content = post.find('div', class_="article-body")
-                    paragraphs = content.find_all('p', {'class':'paragraph'})
-                    if len(paragraphs) > 0:
+                    header = post.find('div', class_='article-header__meta')
+                    header_meta = header.find('div', attrs={'data-component-name':'articleHeaderMeta'}).get('data-component-data')
+                    meta = json.loads(header_meta)
+                    meta_date = meta['date']
+                    msg_date = datetime.strptime(meta_date[:10], '%Y-%m-%d').date()
+                    c = msg_date.replace(day=1)
+                    if current_month != c:
+                        # print('cur', current_month)
+                        self.save_and_clear(posts, chat_name, current_month)
+                        current_month = msg_date.replace(day=1)
+
+                    if current_month in queue:
+                        stats = meta['stats']
                         text = []
-                        headings = content.find_all('h2', class_='heading')
-                        for h in headings:
-                            text.append(h.get_text())
-                        for p in paragraphs:
-                            t: str = p.get_text()
-                            text.append(t.replace("\xa0", " "))
+                        content = post.find('div', class_="article-body")
+                        paragraphs = content.find_all('p', {'class':'paragraph'})
+                        if len(paragraphs) > 0:
+                            text = []
+                            headings = content.find_all('h2', class_='heading')
+                            for h in headings:
+                                text.append(h.get_text())
+                            for p in paragraphs:
+                                t: str = p.get_text()
+                                text.append(t.replace("\xa0", " "))
 
-                        post = {
-                            'ref': f'https://journal.tinkoff.ru{url}',
-                            'text': " ".join(text),
-                            'date': msg_date,
-                            'views': stats['views'],
-                            'reactions': stats['comments']+stats['favoritesCount']
-                        }
-                        posts.append(post)
-                elif msg_date < queue[0]:
-                    # self.save_and_clear(data, chat_name, current_month)
-                    return True, posts
-                else: continue
+                            post = {
+                                'ref': f'https://journal.tinkoff.ru{url}',
+                                'text': " ".join(text),
+                                'date': msg_date,
+                                'views': stats['views'],
+                                'reactions': stats['comments']+stats['favoritesCount']
+                            }
+                            posts.append(post)
+                    elif msg_date < queue[0]:
+                        self.save_and_clear(posts, chat_name, current_month)
+                        return True, posts
+                    else: continue
+                except:
+                    _logger.error(f'Fail to parse page: https://journal.tinkoff.ru{url}')
+                    # with open() as f:
+                    #     pickle.dump(post, f)  
             except:
-                _logger.error(f'Fail to parse page: https://journal.tinkoff.ru{url}')
-                # with open() as f:
-                #     pickle.dump(post, f)  
-            
+                    _logger.error('Could not get url')
         return False, posts
 
 
     def get_history(self, channel: str, queue):
         url_list = [f"/flows/{channel}"]
-        data = []
+        # data = []
         while len(url_list)>0:
             url = url_list.pop()
             _logger.info(f'https://journal.tinkoff.ru{url}/')
@@ -131,7 +134,7 @@ class ParserTinkoff(Parser):
             page = BeautifulSoup(r.text, 'html.parser')
             
             out_date, posts = self.get_posts(page, queue, channel)
-            data.extend(posts)
+            # data.extend(posts)
             del posts
             
             if out_date:
@@ -143,7 +146,7 @@ class ParserTinkoff(Parser):
                     if next.get("data-disabled") == "false":
                         url_list.append(next.get("href"))
                 
-        return data
+        return True
         
     
     def get_source_data(self, chat_name: str, queue):
