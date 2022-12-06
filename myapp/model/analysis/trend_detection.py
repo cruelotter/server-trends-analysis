@@ -336,7 +336,7 @@ class TrendDetection:
         sns.set_theme(style="darkgrid")
         sns.lineplot(token_stats)
         plt.xticks(rotation=15)
-        plt.savefig(f'.storage/img/img_{token}')
+        plt.savefig(f'.storage/img/img_{token}.png')
         plt.close()
         
         return token_stats
@@ -346,7 +346,7 @@ class TrendDetection:
         sns.set_theme(style="darkgrid")
         sns.lineplot(stats, dashes=False)
         plt.xticks(rotation=15)
-        plt.savefig('.storage/img/all')
+        plt.savefig('.storage/img/all.png')
         plt.close()
     
     #! ==========================================================================================================
