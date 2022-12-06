@@ -1,6 +1,7 @@
 from pymongo.mongo_client import MongoClient
 from myapp.logging.logger import _logger
 
+
 if __name__ == '__main__':
     client = MongoClient('localhost', 27017)
     print("Avalible collections: 1) dictionary 2) processed_data 3) users")
@@ -14,4 +15,4 @@ if __name__ == '__main__':
     c = db[collection].count_documents({})
     client.close()
 
-    _logger.warning(f'table [dictionary] {c} docs saves to db.txt')
+    _logger.warning(f'table [{collection}] {c} docs saves to db_{collection}.txt')
