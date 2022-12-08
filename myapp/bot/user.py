@@ -8,6 +8,69 @@ from myapp.bot.constants import *
 from myapp.logging.logger import _logger
 
 
+class Filters:
+    def __init__(self, id, topic='ALL', age=(18, 60), gender='ALL', geo='ALL') -> None:
+        self.id = id
+        self.topic = topic
+        self.age = age
+        self.gender = gender
+        self.geo = geo
+    
+    def to_dict(self):
+        return {
+        'id': self.id,
+        'topic':self.topic,
+        'age':self.age,
+        'gender':self.gender,
+        'geo':self.geo}
+        
+    @staticmethod
+    def check_exists(id):
+        found: dict = MongoManager.find_data(
+            'filters',
+            {'_id': id}
+        )
+        if found is None:
+            user = Filters(id)
+            MongoManager.insert_data(
+                'filters',
+                user.to_dict()
+            )
+            _logger.info(found if found is not None else f"User not found. Creating new...{json.dumps(user.to_dict(), indent=2)}")
+        
+    @staticmethod
+    def set_topic(id, topic):
+        Filters.check_exists(id)
+        MongoManager.update_data(
+            'filters',
+            {'_id': id},
+            {'topic': topic})
+    
+    @staticmethod
+    def set_age(id, age):
+        Filters.check_exists(id)
+        MongoManager.update_data(
+            'filters',
+            {'_id': id},
+            {'age': age})
+        
+    @staticmethod
+    def set_gender(id, gender):
+        Filters.check_exists(id)
+        MongoManager.update_data(
+            'filters',
+            {'_id': id},
+            {'gender': gender})
+        
+    @staticmethod
+    def set_geo(id, geo):
+        Filters.check_exists(id)
+        MongoManager.update_data(
+            'filters',
+            {'_id': id},
+            {'geo': geo})
+    
+
 class User:
     def __init__(self, id, sources=DEFAULT_SOURCES, history: int=DEFAULT_HISTORY,
                  trend: int=DEFAULT_TREND, schedule_days=DEFAULT_SCHEDULE_DAYS, 

@@ -12,7 +12,7 @@ from myapp.bot.user import UserManager
 from myapp.bot.conversations import *
 from myapp.logging.logger import _logger
 
-SOURCES, HISTORY, TREND, SCHEDULE_D, SCHEDULE_T = range(5)
+HISTORY, TREND, SCHEDULE_D, SCHEDULE_T = range(4)
 
 
 def check_access(username):
@@ -38,33 +38,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=update.effective_chat.id,
         text=TXT_START.format(username)
     )
-    reply_keyboard = [['/default', '/cancel']]
-    await update.message.reply_text(
-        text=TXT_SOURCES,
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: {}".format(DEFAULT_SOURCES), resize_keyboard=True
-        )
-    )
-    return SOURCES
-
-
-async def set_custom_1(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    input = update.message.text
-    input = input.split()
-    UserManager.set_sources(update.effective_chat.id, input)
-    reply_keyboard = OPTIONS_HISTORY
-    reply_keyboard.append(['/default', '/cancel'])
-    await update.message.reply_text(
-        text=TXT_HISTORY,
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: 2 года", resize_keyboard=True
-        ),
-    )
-    return HISTORY
-        
-    
-async def set_default_1(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    UserManager.set_sources(update.effective_chat.id, DEFAULT_SOURCES)
+    # reply_keyboard = [['/default', '/cancel']]
     reply_keyboard = OPTIONS_HISTORY
     reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
@@ -249,11 +223,6 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 conversation_start = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
-            SOURCES: [
-                CommandHandler("default", set_default_1),
-                CommandHandler("cancel", cancel),
-                MessageHandler(filters.TEXT, set_custom_1),
-            ],
             HISTORY: [
                 CommandHandler("default", set_default_2),
                 CommandHandler("cancel", cancel),
