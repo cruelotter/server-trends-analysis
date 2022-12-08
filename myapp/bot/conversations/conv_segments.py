@@ -42,7 +42,13 @@ async def select_segment(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def set_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "Бизнес":
         UserManager.set_sources(update.effective_chat.id, BUSINESS)
-        return ConversationHandler.END
+        await update.message.reply_text(
+            "Подобраны источники для данного сегмента",
+            reply_markup=ReplyKeyboardMarkup(
+                [['Начать расчет'],['/cancel']], resize_keyboard=True
+            )
+        )
+        return TRENDS
         
     Filters.set_topic(update.effective_chat.id, TOPIC_SEGMENTS[update.message.text])
     
