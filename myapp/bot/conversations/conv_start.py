@@ -180,7 +180,7 @@ async def set_custom_5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Настройка профиля завершена",
         reply_markup=ReplyKeyboardMarkup(
-            [['/get_trends']], resize_keyboard=True
+            [['Выбрать сегмент']], resize_keyboard=True
         )
     )
     return ConversationHandler.END
@@ -204,7 +204,7 @@ async def set_default_5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Настройка профиля завершена",
         reply_markup=ReplyKeyboardMarkup(
-            [['/get_trends']], resize_keyboard=True
+            [['Выбрать сегмент']], resize_keyboard=True
         )
     )
     return ConversationHandler.END
@@ -214,7 +214,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Выход из настроек профиля",
         reply_markup=ReplyKeyboardMarkup(
-            [['/get_trends']], resize_keyboard=True
+            [['Выбрать сегмент']], resize_keyboard=True
         )
     )
     return ConversationHandler.END

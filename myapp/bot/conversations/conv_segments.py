@@ -29,7 +29,7 @@ async def select_segment(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text=ACCEESS_DENIED.format(update.effective_user.username)
         )
         return ConversationHandler.END
-    reply_keyboard = [list(key) for key in TOPIC_SEGMENTS.keys()]
+    reply_keyboard = [[key] for key in TOPIC_SEGMENTS.keys()]
     await update.message.reply_text(
         text="Выберите, для какой сферы вы хотите получить тренды",
         reply_markup=ReplyKeyboardMarkup(
@@ -49,7 +49,7 @@ async def set_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Выберите возраст целевой аудитории",
         reply_markup=ReplyKeyboardMarkup(
-            [list(key) for key in AGE_SEGMENTS.keys()], resize_keyboard=True
+            [[key] for key in AGE_SEGMENTS.keys()], resize_keyboard=True
         )
     )
     return AGE
@@ -62,7 +62,7 @@ async def set_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Выберите пол целевой аудитории",
         reply_markup=ReplyKeyboardMarkup(
-            [list(key) for key in GENDER_SEGMENTS.keys()], resize_keyboard=True
+            [[key] for key in GENDER_SEGMENTS.keys()], resize_keyboard=True
         )
     )
     return GENDER
@@ -73,7 +73,7 @@ async def set_gender(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Выберите регион целевой аудитории",
         reply_markup=ReplyKeyboardMarkup(
-            [list(key) for key in GEO_SEGMENTS.keys()], resize_keyboard=True
+            [[key] for key in GEO_SEGMENTS.keys()], resize_keyboard=True
         )
     )
     return GEO
@@ -109,7 +109,9 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 
 conversation_segments = ConversationHandler(
-        entry_points=[CommandHandler("set_sources", select_segment)],
+        entry_points=[CommandHandler("select_segment", select_segment),
+                      CommandHandler("get_trends", select_segment),
+                      MessageHandler(filters.Regex(r'Выбрать сегмент'), select_segment)],
         states={
             TOPIC: [
                 MessageHandler(filters.TEXT, set_topic),

@@ -147,8 +147,8 @@ if __name__ == '__main__':
     profile_handler = CommandHandler('profile', profile, block=False)
     app.add_handler(profile_handler, 3)
     
-    get_trends_handler = CommandHandler('get_trends', get_trends_manager, block=False)
-    app.add_handler(get_trends_handler, 4)
+    # get_trends_handler = CommandHandler('get_trends', get_trends_manager, block=False)
+    # app.add_handler(get_trends_handler, 4)
     
     app.add_handler(conversation_segments)
     app.add_handlers([conversation_start, conversation_sources, conversation_history,
