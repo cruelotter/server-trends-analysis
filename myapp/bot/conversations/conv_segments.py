@@ -94,7 +94,7 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def start_trends(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == 'Начать расчет':
-        get_trends_manager(update, context)
+        await get_trends_manager(update, context)
     return ConversationHandler.END
     
 

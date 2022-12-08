@@ -6,7 +6,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-
+import time
 from myapp.bot.constants import *
 from myapp.bot.user import UserManager
 from myapp.bot.conversations import *
@@ -33,11 +33,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_chat.id,
             text=ACCEESS_GRANTED
         )
+    time.sleep(3)
     username = update.effective_user.full_name
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=TXT_START.format(username)
     )
+    time.sleep(3)
     # reply_keyboard = [['/default', '/cancel']]
     reply_keyboard = OPTIONS_HISTORY
     reply_keyboard.append(['/default', '/cancel'])
