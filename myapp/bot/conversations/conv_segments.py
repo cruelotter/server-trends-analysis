@@ -80,7 +80,7 @@ async def set_gender(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
    
 async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    Filters.set_geo(update.effective_chat.id, AGE_SEGMENTS[update.message.text])
+    Filters.set_geo(update.effective_chat.id, GEO_SEGMENTS[update.message.text])
     await update.message.reply_text(
         "Подобраны источники для данного сегмента",
         reply_markup=ReplyKeyboardMarkup(
