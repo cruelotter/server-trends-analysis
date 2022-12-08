@@ -10,11 +10,22 @@ from myapp.logging.logger import _logger
 
 class Filters:
     def __init__(self, id, topic='ALL', age=(18, 60), gender='ALL', geo='ALL') -> None:
-        self.id = id
-        self.topic = topic
-        self.age = age
-        self.gender = gender
-        self.geo = geo
+        found: dict = MongoManager.find_data(
+            'filters',
+            {'_id': id}
+        )
+        if found is None:
+            self.id = id
+            self.topic = topic
+            self.age = age
+            self.gender = gender
+            self.geo = geo
+        else:
+            self.id = id
+            self.topic = found['topic']
+            self.age = found['age']
+            self.gender = found['gender']
+            self.geo = found['geo']
     
     def to_dict(self):
         return {
@@ -53,6 +64,7 @@ class Filters:
             'filters',
             {'_id': id},
             {'age': age})
+        _logger.info('Age filter updated')
         
     @staticmethod
     def set_gender(id, gender):

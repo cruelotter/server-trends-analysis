@@ -50,10 +50,11 @@ def filter_sources(age, gender, geo):
         sources = pd.read_csv('./myapp/bot/sources.csv', index_col=0)
         if gender != 'ALL':
             sources.drop(sources[sources['gender']!=gender].index, inplace=True)
-        if geo != 'ALL':
+        if geo != (18,60):
             sources.drop(sources[sources['geo']!=geo].index, inplace=True)
-        sources['age_filter'] = sources['age'].apply(lambda x: bool(str(age) in x))
-        sources.drop(sources[sources['age_filter']==False].index, inplace=True)
+        if age != 'ALL':
+            sources['age_filter'] = sources['age'].apply(lambda x: bool(str(age) in x))
+            sources.drop(sources[sources['age_filter']==False].index, inplace=True)
         return sources['name'].tolist()
     
     except Exception as e:
