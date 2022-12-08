@@ -33,13 +33,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_chat.id,
             text=ACCEESS_GRANTED
         )
-    sleep(3)
+    sleep(2)
     username = update.effective_user.full_name
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=TXT_START.format(username)
     )
-    sleep(3)
+    sleep(2)
     # reply_keyboard = [['/default', '/cancel']]
     reply_keyboard = OPTIONS_HISTORY
     reply_keyboard.append(['/default', '/cancel'])

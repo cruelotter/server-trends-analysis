@@ -75,7 +75,7 @@ async def set_age(update: Update, context: ContextTypes.DEFAULT_TYPE):
    
     
 async def set_gender(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    Filters.set_gender(update.effective_chat.id, AGE_SEGMENTS[update.message.text])
+    Filters.set_gender(update.effective_chat.id, GENDER_SEGMENTS[update.message.text])
     await update.message.reply_text(
         "Выберите регион целевой аудитории",
         reply_markup=ReplyKeyboardMarkup(
@@ -95,7 +95,7 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     filters = Filters(update.effective_chat.id).to_dict()
     _logger.info(filters)
-    source_list = filter_sources(filters['age'], filters['gender'], filters['geo'])
+    source_list = filter_sources(tuple(filters['age']), filters['gender'], filters['geo'])
     _logger.info(source_list)
     UserManager.set_sources(update.effective_chat.id, source_list)
     return TRENDS
@@ -104,12 +104,19 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start_trends(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == 'Начать расчет':
         await get_trends_manager(update, context)
+    else:
+        await update.message.reply_text(
+            "Отмена",
+            reply_markup=ReplyKeyboardMarkup(
+                [['Выбрать сегмент']], resize_keyboard=True
+            )
+        )
     return ConversationHandler.END
     
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "",
+        "Отмена",
         reply_markup=ReplyKeyboardMarkup(
             [['/get_trends']], resize_keyboard=True
         )

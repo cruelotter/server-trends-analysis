@@ -50,9 +50,9 @@ def filter_sources(age, gender, geo):
         sources = pd.read_csv('./myapp/bot/sources.csv', index_col=0)
         if gender != 'ALL':
             sources.drop(sources[sources['gender']!=gender].index, inplace=True)
-        if geo != (18,60):
+        if geo != 'ALL':
             sources.drop(sources[sources['geo']!=geo].index, inplace=True)
-        if age != 'ALL':
+        if age != (18,60):
             sources['age_filter'] = sources['age'].apply(lambda x: bool(str(age) in x))
             sources.drop(sources[sources['age_filter']==False].index, inplace=True)
         return sources['name'].tolist()
