@@ -1,25 +1,7 @@
-# Модель
-## Исходники и предобработанные данные хранятся в ./storage/data
-## Предобработка данных
-файл myapp/model/analysis/preprocessing.py
-
-## Определение топа слов
-файл myapp/model/analysis/trend_detection.py
-
-## Тестовые версии разных способов посчитать тренды
-myapp/model/analysis/rate_growing.py
-
-## Чтобы запустить парсинг данных, обработку и все такое 
-запусти файл myapp/model/pipeline.py
-Можешь добавить любой тг канал или группу вк (формат там в примерах посмотришь),
-для этого поменяй список с источниками в самом конце файла pipeline.py в исполняемой части (где конструкция if __ name __ == "__ main __")
-
-## .
-
 # Trend Analysis Bot
 
 ## Description
-@TrendAnalysisBot
+[@TrendAnalysisBot](https://t.me//TrendAnalysisBot)
 
 It is bot for telegram, that parses data from telegram channels, VK groups and websites, process it/ The result is pdf file with trending topic and graphs with history of their behaviour.
 
@@ -43,12 +25,19 @@ sudo systemctl start mongod
 
 Intsall dependancy for PDF converter
 ```bash
-sudo apt-get install wkhtmltopdf
+python -m venv bot_venv
+source bot_venv/bin/activate
 ```
 
 Run setup.py to find all required packages
+```bash
+python setup.py install
+```
 
 To start bot run bot.py
+```bash
+python myapp/bot/bot.py
+```
 
 ## Usage
 
