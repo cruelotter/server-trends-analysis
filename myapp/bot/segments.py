@@ -47,7 +47,7 @@ GEO_SEGMENTS = {
 
 def filter_sources(age, gender, geo):
     try:
-        sources = pd.read_csv('sources.csv', index_col=0)
+        sources = pd.read_csv('./myapp/bot/sources.csv', index_col=0)
         if gender != 'ALL':
             sources.drop(sources[sources['gender']!=gender].index, inplace=True)
         if geo != 'ALL':
