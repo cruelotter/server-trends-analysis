@@ -4,6 +4,7 @@
 *.json
 *.png
 *.pyc
+bot_venv/
 venv/
 trend_analysis.egg-info/
 __pycache__/
