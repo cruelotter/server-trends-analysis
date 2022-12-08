@@ -12,7 +12,7 @@ from myapp.bot.constants import *
 from myapp.bot.user import UserManager, Filters
 from myapp.bot.segments import *
 from myapp.bot.conversations.get_trends_manager import get_trends_manager
-
+from myapp.logging.logger import _logger
 
 def check_access(username):
     whitelist = set(line.strip() for line in open('users_whitelist.txt'))
@@ -88,7 +88,10 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     )
     filters = Filters(update.effective_chat.id).to_dict()
-    UserManager.set_sources(update.effective_chat.id, filter_sources(filters['age'], filters['gender'], filters['geo']))
+    _logger.info(filters)
+    source_list = filter_sources(filters['age'], filters['gender'], filters['geo'])
+    _logger.info(source_list)
+    UserManager.set_sources(update.effective_chat.id, source_list)
     return TRENDS
 
 
