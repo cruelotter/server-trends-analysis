@@ -64,11 +64,12 @@ async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # else:
     try:
         history = DICT_HISTORY[update.message.text]
-    except:
+    except Exception as e:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
             reply_markup=ReplyKeyboardRemove()
         )
+        _logger.error(e)
         return HISTORY
     UserManager.set_history_duration(update.effective_chat.id, history)
     reply_keyboard = OPTIONS_TREND
