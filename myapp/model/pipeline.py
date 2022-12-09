@@ -211,7 +211,7 @@ class Pipeline:
         body = ""
         # p_unique = set()
         for row in top.itertuples():
-            print(f'page: {row[1]}')
+            print(f'page: {row[0]} {row[1]}')
             # use = self.usage(old[i], p_unique)
             # example_posts = ""
             # for post in use:
@@ -220,13 +220,14 @@ class Pipeline:
                 
             # path = pathlib.Path(f"/home/cruelotter/sber/trends_analysis/storage/img/history_{old[i]}.png").as_uri()
             import json
-            with open(f'usage_{row[0]}.json', 'r', encoding='utf-8') as file:
+            with open(f'storage/usage/usage_{row[0]}.json', 'r', encoding='utf-8') as file:
                 use = json.load(file)
+            print("usage found:", len(use))
             if len(use)>3: use = use[:2]
             html_examples=""
             for use_post in use:
                 html_examples += f"<h3>{use_post['path'][15:-8]}</h3><p>{use_post['date'][:-13]}</p><p>{use_post['text']}</p>"
-            
+                
             path = pathlib.Path(f"/home/server-trends-analysis/storage/img/img_{row[0]}.png").as_uri()
             body += page_str.format(row[1], path, html_examples)
             print('ok')

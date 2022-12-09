@@ -22,22 +22,17 @@ def check_access(username):
     else: return False
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not check_access(update.effective_user.username):
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=ACCEESS_DENIED.format(update.effective_user.username)
         )
         return
-    await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=ACCEESS_GRANTED
-        )
-    sleep(1.5)
     username = update.effective_user.full_name
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=TXT_START.format(username)
+        text=TXT_SETTINGS.format(username)
     )
     sleep(1.5)
     # reply_keyboard = [['/default', '/cancel']]
@@ -59,8 +54,8 @@ async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
         history = 12*3
     elif update.message.text == "6 месяцев":
         history = 6
-    elif update.message.text =="2 года":
-        history = 12*2
+    elif update.message.text =="5 лет":
+        history = 12*5
     else:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
@@ -222,8 +217,9 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 
-conversation_start = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
+conversation_settings = ConversationHandler(
+        entry_points=[CommandHandler("start", settings),
+                      MessageHandler(filters.Regex(r'Изменить настройки'), settings)],
         states={
             HISTORY: [
                 CommandHandler("default", set_default_2),

@@ -45,7 +45,7 @@ async def set_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "Подобраны источники для данного сегмента",
             reply_markup=ReplyKeyboardMarkup(
-                [['Начать расчет'],['/cancel']], resize_keyboard=True
+                [['Расчитать тренды'],['/cancel']], resize_keyboard=True
             )
         )
         return TRENDS
@@ -90,7 +90,7 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Подобраны источники для данного сегмента",
         reply_markup=ReplyKeyboardMarkup(
-            [['Начать расчет'],['/cancel']], resize_keyboard=True
+            [['Расчитать тренды'],['/cancel']], resize_keyboard=True
         )
     )
     filters = Filters(update.effective_chat.id).to_dict()
@@ -98,57 +98,58 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     source_list = filter_sources(tuple(filters['age']), filters['gender'], filters['geo'])
     _logger.info(source_list)
     UserManager.set_sources(update.effective_chat.id, source_list)
-    return TRENDS
-
-
-async def start_trends(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.text == 'Начать расчет':
-        await get_trends_manager(update, context)
-    else:
-        await update.message.reply_text(
-            "Отмена",
-            reply_markup=ReplyKeyboardMarkup(
-                [['Выбрать сегмент']], resize_keyboard=True
-            )
-        )
+    
     return ConversationHandler.END
+
+
+# async def start_trends(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     if update.message.text == 'Расчитать тренды':
+#         await get_trends_manager(update, context)
+#     else:
+#         await update.message.reply_text(
+#             "Отмена",
+#             reply_markup=ReplyKeyboardMarkup(
+#                 [['Выбрать сегмент']], resize_keyboard=True
+#             )
+#         )
+#     return ConversationHandler.END
     
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Отмена",
         reply_markup=ReplyKeyboardMarkup(
-            [['/get_trends']], resize_keyboard=True
+            [['Выбрать сегмент']], resize_keyboard=True
         )
     )
     return ConversationHandler.END
     
 
 conversation_segments = ConversationHandler(
-        entry_points=[CommandHandler("select_segment", select_segment),
-                      CommandHandler("get_trends", select_segment),
-                      MessageHandler(filters.Regex(r'Выбрать сегмент'), select_segment)],
+        entry_points=[CommandHandler("select_segment", select_segment, block=False),
+                      CommandHandler("get_trends", select_segment, block=False),
+                      MessageHandler(filters.Regex(r'Выбрать сегмент'), select_segment, block=False)],
         states={
             TOPIC: [
-                MessageHandler(filters.TEXT, set_topic),
-                CommandHandler("cancel", cancel),
+                MessageHandler(filters.TEXT, set_topic, block=False),
+                CommandHandler("cancel", cancel, block=False),
             ],
             AGE: [
-                MessageHandler(filters.TEXT, set_age),
-                CommandHandler("cancel", cancel),
+                MessageHandler(filters.TEXT, set_age, block=False),
+                CommandHandler("cancel", cancel, block=False),
             ],
             GENDER: [
-                MessageHandler(filters.TEXT, set_gender),
-                CommandHandler("cancel", cancel),
+                MessageHandler(filters.TEXT, set_gender, block=False),
+                CommandHandler("cancel", cancel, block=False),
             ],
             GEO: [
-                MessageHandler(filters.TEXT, set_geo),
-                CommandHandler("cancel", cancel),
+                MessageHandler(filters.TEXT, set_geo, block=False),
+                CommandHandler("cancel", cancel, block=False),
             ],
-            TRENDS: [
-                MessageHandler(filters.TEXT, start_trends),
-                CommandHandler("cancel", cancel),
-            ]
+            # TRENDS: [
+            #     MessageHandler(filters.TEXT, start_trends),
+            #     CommandHandler("cancel", cancel),
+            # ]
         },
-        fallbacks=[CommandHandler("cancel", cancel)],
+        fallbacks=[CommandHandler("cancel", cancel, block=False)],
     )

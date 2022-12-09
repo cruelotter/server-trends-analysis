@@ -251,7 +251,7 @@ class TrendDetection:
         except Exception as e:
             print(token, end=' __ ')
             print(e)
-            return [["Not found", 'not found']]
+            return [{'path': "_",'ref': "_", 'date':"_", 'text':"_"}]
         df = df.loc[(df['token']==str(token)) & (df['year']==date.year), ['token', 'month', 'path', 'ref']]
         docs: pd.DataFrame = df.loc[(df['month']==date.month) | (df['month']==date.month-1), ['path', 'ref']]
         docs.reset_index(inplace=True)
@@ -369,7 +369,7 @@ class TrendDetection:
         for tok in df.index.to_numpy():
             # print(tok)
             u = TrendDetection.usage(tok, set(), start_date)
-            with open(f'usage_{tok}.json', 'w', encoding='utf-8') as file:
+            with open(f'storage/usage/usage_{tok}.json', 'w', encoding='utf-8') as file:
                 pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
             
             

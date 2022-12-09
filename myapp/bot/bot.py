@@ -91,7 +91,16 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=PROFILE.format(usr.id, usr.history_duration, usr.trend_period, days_str, usr.schedule_time[:-3], src),
-        disable_web_page_preview=True
+        disable_web_page_preview=True,
+        reply_markup=ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
+    )
+    
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Отмена",
+        reply_markup=ReplyKeyboardMarkup(
+            MAIN_KEYBOARD, resize_keyboard=True
+        )
     )
     
 # def rerun_schedule(context: ContextTypes.DEFAULT_TYPE):
@@ -112,7 +121,8 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def error(update: object, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=ERROR
+        text=ERROR,
+        reply_markup=ReplyKeyboardMarkup(MAIN_KEYBOARD, resize_keyboard=True)
     )
     e = context.error
     e_text = []
@@ -121,7 +131,7 @@ async def error(update: object, context: ContextTypes.DEFAULT_TYPE):
     while trace is not None:
         e_text.append(trace_str.format(trace.tb_frame.f_code.co_filename, trace.tb_frame.f_code.co_name, trace.tb_lineno))
         trace = trace.tb_next
-    traces = "\n".join(e_text)
+    traces = "\n\n".join(e_text)
     txt = f'''{type(e).__name__}
 {e}
 {traces}'''
@@ -139,20 +149,23 @@ if __name__ == '__main__':
     app = ApplicationBuilder().token(bot_token).build()
     
     help_handler = CommandHandler('help', help, block=False)
-    app.add_handler(help_handler, 1)
+    app.add_handler(help_handler, 0)
     
     status_handler = CommandHandler('status', status, block=False)
     app.add_handler(status_handler, 0)
     
-    profile_handler = CommandHandler('profile', profile, block=False)
-    app.add_handler(profile_handler, 3)
+    profile_cmd_handler = CommandHandler('profile', profile, block=False)
+    profile_msg_handler = MessageHandler(filters.Regex(r'Профиль'), profile, block=False)
+    app.add_handlers([profile_cmd_handler, profile_msg_handler], 2)
     
-    # get_trends_handler = CommandHandler('get_trends', get_trends_manager, block=False)
-    # app.add_handler(get_trends_handler, 4)
+    
+    get_trends_msg_handler = MessageHandler(filters=filters.Regex(r'Расчитать тренды'), callback=get_trends_manager, block=False)
+    get_trends_cmd_handler = CommandHandler('get_trends', get_trends_manager, block=False)
+    app.add_handlers([get_trends_cmd_handler, get_trends_msg_handler], 3)
     
     app.add_handler(conversation_segments)
     app.add_handlers([conversation_start, conversation_sources, conversation_history,
-                      conversation_trend, conversation_schedule, ])
+                      conversation_trend, conversation_schedule, conversation_settings], 1)
     
     app.add_error_handler(error)
     

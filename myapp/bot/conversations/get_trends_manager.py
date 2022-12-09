@@ -20,6 +20,7 @@ def check_access(username):
         return True
     else: return False
 
+
 async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not check_access(update.effective_user.username):
         await context.bot.send_message(
@@ -41,8 +42,8 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await context.bot.send_document(chat_id, document=open(file+".html", 'rb'),
                                     caption=string_trend_list,
                                     reply_markup=ReplyKeyboardMarkup(
-            [['/get_trends']], resize_keyboard=True
-        ))
+                                        MAIN_KEYBOARD, resize_keyboard=True)
+                                    )
     _logger.warning("Pipeline ran successfully")
     # await context.bot.send_message(chat_id, text=f"Обработка завершена успешно!\n{trends}")
     
