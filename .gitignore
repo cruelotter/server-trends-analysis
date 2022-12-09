@@ -1,5 +1,6 @@
 *.csv
 !myapp/bot/sources.csv
+!storage/ref.csv
 *.pkl
 *.json
 *.png
