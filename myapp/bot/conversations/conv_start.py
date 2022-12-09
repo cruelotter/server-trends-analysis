@@ -53,15 +53,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.text == "1 год":
-        history = 12*1
-    elif update.message.text == "3 года":
-        history = 12*3
-    elif update.message.text == "6 месяцев":
-        history = 6
-    elif update.message.text =="2 года":
-        history = 12*2
-    else:
+    # if update.message.text == "1 год":
+    #     history = 12*1
+    # elif update.message.text == "3 года":
+    #     history = 12*3
+    # elif update.message.text == "6 месяцев":
+    #     history = 6
+    # elif update.message.text =="2 года":
+    #     history = 12*2
+    # else:
+    try:
+        history = DICT_HISTORY[update.message.text]
+    except:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
             reply_markup=ReplyKeyboardRemove()
@@ -93,14 +96,22 @@ async def set_default_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def set_custom_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.text == "За 1 месяц":
-        trend = 30
-    elif update.message.text == "За 2 недели":
-        trend = 14
-    elif update.message.text == "За 1 неделю":
-        trend = 7
-    elif update.message.text == "За 2 дня":
-        trend = 2
+    # if update.message.text == "За 1 месяц":
+    #     trend = 30
+    # elif update.message.text == "За 2 недели":
+    #     trend = 14
+    # elif update.message.text == "За 1 неделю":
+    #     trend = 7
+    # elif update.message.text == "За 2 дня":
+    #     trend = 2
+    try:
+        trend = DICT_TREND[update.message.text]
+    except:
+        await update.message.reply_text(
+            "Ошибка, такой вариант не предусмотрен",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return TREND
     UserManager.set_trend_period(update.effective_chat.id, trend)
     reply_keyboard = OPTIONS_SCHEDULE_DAYS
     reply_keyboard.append(['/default', '/cancel'])
@@ -127,14 +138,22 @@ async def set_default_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     
 async def set_custom_4(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.text == "Каждый день":
-        days = [1,2,3,4,5]
-    elif update.message.text == "Пн Ср Пт":
-        days = [1,3,5]
-    elif update.message.text == "Пн":
-        days = [1]
-    elif update.message.text == "Никогда":
-        days = []
+    # if update.message.text == "Каждый день":
+    #     days = [1,2,3,4,5]
+    # elif update.message.text == "Пн Ср Пт":
+    #     days = [1,3,5]
+    # elif update.message.text == "Пн":
+    #     days = [1]
+    # elif update.message.text == "Никогда":
+    #     days = []
+    try:
+        days = DICT_SCHEDULE[update.message.text]
+    except:
+        await update.message.reply_text(
+            "Ошибка, такой вариант не предусмотрен",
+            reply_markup=ReplyKeyboardRemove()
+        )
+        return SCHEDULE_D
     UserManager.set_schedule_days(update.effective_chat.id, days)
     reply_keyboard = [['/default', '/cancel']]
     await update.message.reply_text(
@@ -223,27 +242,27 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 conversation_start = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
+        entry_points=[CommandHandler("start", start, block=False)],
         states={
             HISTORY: [
-                CommandHandler("default", set_default_2),
-                CommandHandler("cancel", cancel),
-                MessageHandler(filters.TEXT, set_custom_2),
+                CommandHandler("default", set_default_2, block=False),
+                CommandHandler("cancel", cancel, block=False),
+                MessageHandler(filters.TEXT, set_custom_2, block=False),
             ],
             TREND: [
-                CommandHandler("default", set_default_3),
-                CommandHandler("cancel", cancel),
-                MessageHandler(filters.TEXT, set_custom_3),
+                CommandHandler("default", set_default_3, block=False),
+                CommandHandler("cancel", cancel, block=False),
+                MessageHandler(filters.TEXT, set_custom_3, block=False),
             ],
             SCHEDULE_D: [
-                CommandHandler("default", set_default_4),
-                CommandHandler("cancel", cancel),
-                MessageHandler(filters.TEXT, set_custom_4),
+                CommandHandler("default", set_default_4, block=False),
+                CommandHandler("cancel", cancel, block=False),
+                MessageHandler(filters.TEXT, set_custom_4, block=False),
             ],
             SCHEDULE_T: [
-                CommandHandler("default", set_default_5),
-                CommandHandler("cancel", cancel),
-                MessageHandler(filters.TEXT, set_custom_5),
+                CommandHandler("default", set_default_5, block=False),
+                CommandHandler("cancel", cancel, block=False),
+                MessageHandler(filters.TEXT, set_custom_5, block=False),
             ]
         },
         fallbacks=[CommandHandler("cancel", cancel)],
