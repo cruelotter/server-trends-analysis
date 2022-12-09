@@ -57,7 +57,8 @@ TXT_HISTORY = '''Выберите, за какой период использо
 
 DEFAULT_HISTORY: int = 12
 OPTIONS_HISTORY = [['6 месяцев', '1 год'],
-                   ['2 года', '3 года']]
+                   ['2 года', '3 года'],
+                   ['/default', '/cancel']]
 
 OPTION_VALUE_HISTORY = {'6 месяцев': 6, 
                 '1 год': 12,
@@ -72,7 +73,8 @@ TXT_TREND = '''Выберите, за какой интервал определ
 DEFAULT_TREND: int = 14
 
 OPTIONS_TREND = [['За 1 месяц'],
-                 ['За 1 неделю','За 2 недели']]
+                 ['За 1 неделю','За 2 недели'],
+                 ['/default', '/cancel']]
 
 OPTION_VALUE_TREND = {'За 1 неделю': 7,
               'За 2 недели': 14,
@@ -85,9 +87,9 @@ TXT_SCHEDULE_DAYS = '''Выберите, как часто получать ав
 
 DEFAULT_SCHEDULE_DAYS = [1,3,5]
 
-OPTIONS_SCHEDULE_DAYS = [['Каждый будний день'],
+OPTIONS_SCHEDULE_DAYS = [['По будним дням', 'Никогда'],
                          ['Пн', 'Пн Ср Пт'],
-                         ['Никогда']]
+                         ['/default', '/cancel']]
 
 OPTION_VALUE_SCHEDULE = {'Каждый будний день': [1,2,3,4,5],
                  'Пн': [1],

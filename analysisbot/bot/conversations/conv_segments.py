@@ -128,7 +128,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 conversation_segments = ConversationHandler(
         entry_points=[CommandHandler("select_segment", select_segment, block=False),
                       CommandHandler("get_trends", select_segment, block=False),
-                      MessageHandler(filters.Regex(r'Выбрать сегмент'), select_segment, block=False)],
+                      MessageHandler(filters.Regex('Выбрать сегмент'), select_segment, block=False)],
         states={
             TOPIC: [
                 MessageHandler(filters.TEXT, set_topic, block=False),

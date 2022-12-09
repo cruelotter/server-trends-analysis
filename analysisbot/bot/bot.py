@@ -166,7 +166,8 @@ def run_bot():
     get_trends_cmd_handler = CommandHandler('get_trends', get_trends_manager, block=False)
     app.add_handlers([get_trends_cmd_handler, get_trends_msg_handler], 3)
     
-    app.add_handler(conversation_segments)
+    
+    app.add_handler(conversation_segments, 0)
     app.add_handlers([conversation_start, conversation_sources, conversation_history,
                       conversation_trend, conversation_schedule, conversation_settings], 1)
     

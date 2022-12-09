@@ -33,16 +33,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_chat.id,
             text=ACCEESS_GRANTED
         )
-    sleep(1.5)
+    sleep(1)
     username = update.effective_user.full_name
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=TXT_START.format(username)
     )
-    sleep(1.5)
+    sleep(1)
     # reply_keyboard = [['/default', '/cancel']]
     reply_keyboard = OPTIONS_HISTORY
-    reply_keyboard.append(['/default', '/cancel'])
+    # reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
         text=TXT_HISTORY,
         reply_markup=ReplyKeyboardMarkup(
@@ -72,11 +72,11 @@ async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return HISTORY
     UserManager.set_history_duration(update.effective_chat.id, history)
     reply_keyboard = OPTIONS_TREND
-    reply_keyboard.append(['/default', '/cancel'])
+    # reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
         text=TXT_TREND,
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: 7 дней"
+            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: 30 дней"
         ),
     )
     return TREND
@@ -85,11 +85,11 @@ async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def set_default_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     UserManager.set_history_duration(update.effective_chat.id, DEFAULT_HISTORY)
     reply_keyboard = OPTIONS_TREND.copy()
-    reply_keyboard.append(['/default', '/cancel'])
+    # reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
         text=TXT_TREND,
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: 7 дней"
+            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: 30 дней"
         ),
     )
     return TREND
@@ -114,7 +114,7 @@ async def set_custom_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return TREND
     UserManager.set_trend_period(update.effective_chat.id, trend)
     reply_keyboard = OPTIONS_SCHEDULE_DAYS
-    reply_keyboard.append(['/default', '/cancel'])
+    # reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
         text=TXT_SCHEDULE_DAYS,
         reply_markup=ReplyKeyboardMarkup(
@@ -127,7 +127,7 @@ async def set_custom_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def set_default_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     UserManager.set_trend_period(update.effective_chat.id, DEFAULT_TREND)
     reply_keyboard = OPTIONS_SCHEDULE_DAYS
-    reply_keyboard.append(['/default', '/cancel'])
+    # reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
         text=TXT_SCHEDULE_DAYS,
         reply_markup=ReplyKeyboardMarkup(
@@ -201,7 +201,7 @@ async def set_custom_5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Настройка профиля завершена",
         reply_markup=ReplyKeyboardMarkup(
-            [['Выбрать сегмент']], resize_keyboard=True
+            MAIN_KEYBOARD, resize_keyboard=True
         )
     )
     return ConversationHandler.END
