@@ -63,11 +63,10 @@ async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #     history = 12*2
     # else:
     try:
-        history = DICT_HISTORY[update.message.text]
+        history = OPTION_VALUE_HISTORY[update.message.text]
     except Exception as e:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
-            reply_markup=ReplyKeyboardRemove()
         )
         _logger.error(e)
         return HISTORY
@@ -85,8 +84,8 @@ async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 async def set_default_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     UserManager.set_history_duration(update.effective_chat.id, DEFAULT_HISTORY)
-    reply_keyboard = OPTIONS_TREND.append(['/default', '/cancel'])
-    # reply_keyboard.append(['/default', '/cancel'])
+    reply_keyboard = OPTIONS_TREND.copy()
+    reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
         text=TXT_TREND,
         reply_markup=ReplyKeyboardMarkup(
@@ -106,11 +105,10 @@ async def set_custom_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # elif update.message.text == "За 2 дня":
     #     trend = 2
     try:
-        trend = DICT_TREND[update.message.text]
+        trend = OPTION_VALUE_TREND[update.message.text]
     except Exception as e:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
-            reply_markup=ReplyKeyboardRemove()
         )
         _logger.error(e)
         return TREND
@@ -149,11 +147,10 @@ async def set_custom_4(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # elif update.message.text == "Никогда":
     #     days = []
     try:
-        days = DICT_SCHEDULE[update.message.text]
+        days = OPTION_VALUE_SCHEDULE[update.message.text]
     except Exception as e:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
-            reply_markup=ReplyKeyboardRemove()
         )
         _logger.error(e)
         return SCHEDULE_D
