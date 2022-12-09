@@ -1,5 +1,6 @@
 *.csv
 !analysisbot/bot/sources.csv
+!storage/ref.csv
 *.pkl
 *.json
 *.png
