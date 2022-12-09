@@ -107,11 +107,12 @@ async def set_custom_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #     trend = 2
     try:
         trend = DICT_TREND[update.message.text]
-    except:
+    except Exception as e:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
             reply_markup=ReplyKeyboardRemove()
         )
+        _logger.error(e)
         return TREND
     UserManager.set_trend_period(update.effective_chat.id, trend)
     reply_keyboard = OPTIONS_SCHEDULE_DAYS
@@ -149,11 +150,12 @@ async def set_custom_4(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #     days = []
     try:
         days = DICT_SCHEDULE[update.message.text]
-    except:
+    except Exception as e:
         await update.message.reply_text(
             "Ошибка, такой вариант не предусмотрен",
             reply_markup=ReplyKeyboardRemove()
         )
+        _logger.error(e)
         return SCHEDULE_D
     UserManager.set_schedule_days(update.effective_chat.id, days)
     reply_keyboard = [['/default', '/cancel']]
@@ -226,7 +228,7 @@ async def set_default_5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Настройка профиля завершена",
         reply_markup=ReplyKeyboardMarkup(
-            [['Выбрать сегмент']], resize_keyboard=True
+            MAIN_KEYBOARD, resize_keyboard=True
         )
     )
     return ConversationHandler.END
@@ -236,7 +238,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Выход из настроек профиля",
         reply_markup=ReplyKeyboardMarkup(
-            [['Выбрать сегмент']], resize_keyboard=True
+            MAIN_KEYBOARD, resize_keyboard=True
         )
     )
     return ConversationHandler.END

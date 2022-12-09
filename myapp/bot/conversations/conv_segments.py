@@ -119,7 +119,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Отмена",
         reply_markup=ReplyKeyboardMarkup(
-            [['Выбрать сегмент']], resize_keyboard=True
+            MAIN_KEYBOARD, resize_keyboard=True
         )
     )
     return ConversationHandler.END

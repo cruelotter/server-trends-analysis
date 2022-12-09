@@ -154,6 +154,9 @@ if __name__ == '__main__':
     status_handler = CommandHandler('status', status, block=False)
     app.add_handler(status_handler, 0)
     
+    cancel_handler = CommandHandler('cancel', cancel, block=False)
+    app.add_handler(cancel_handler, 0)
+    
     profile_cmd_handler = CommandHandler('profile', profile, block=False)
     profile_msg_handler = MessageHandler(filters.Regex(r'Профиль'), profile, block=False)
     app.add_handlers([profile_cmd_handler, profile_msg_handler], 2)
