@@ -7,9 +7,9 @@ from telegram.ext import (
     filters,
 )
 from time import sleep
-from myapp.bot.constants import *
 from myapp.bot.user import UserManager
-from myapp.bot.conversations import *
+from myapp.bot.conversations.get_trends_manager import get_trends_manager
+from myapp.bot.constants import *
 from myapp.logging.logger import _logger
 
 HISTORY, TREND, SCHEDULE_D, SCHEDULE_T = range(4)
@@ -85,8 +85,8 @@ async def set_custom_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 async def set_default_2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     UserManager.set_history_duration(update.effective_chat.id, DEFAULT_HISTORY)
-    reply_keyboard = OPTIONS_TREND
-    reply_keyboard.append(['/default', '/cancel'])
+    reply_keyboard = OPTIONS_TREND.append(['/default', '/cancel'])
+    # reply_keyboard.append(['/default', '/cancel'])
     await update.message.reply_text(
         text=TXT_TREND,
         reply_markup=ReplyKeyboardMarkup(
