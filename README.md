@@ -36,7 +36,7 @@ python setup.py install
 
 To start bot run bot.py
 ```bash
-python myapp/bot/bot.py
+python analysisbot/bot/bot.py
 ```
 
 ## Usage
