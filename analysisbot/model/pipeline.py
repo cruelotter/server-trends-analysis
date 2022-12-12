@@ -81,10 +81,10 @@ class Pipeline:
                             # 'processed_data',
                             # {"type": src_type, "source": source, "year": start.year, "month": start.month, "full": datetime.now().isoformat()}
                         # )
-                        elif cur["full"] < datetime.combine(datetime.now().date(), time(0,0)):
+                        elif cur["full"] >= datetime.now():
                             parse_queue[src_type][source].append(start)
                     except:
-                        if datetime.fromisoformat(cur["full"]) < datetime.combine(datetime.now().date(), time(0,0)):
+                        if datetime.fromisoformat(cur["full"]) >= datetime.now():
                             parse_queue[src_type][source].append(start)
                         # parse_queue[src_type].append((path,[source, start, start + relativedelta(months=1)]))
 

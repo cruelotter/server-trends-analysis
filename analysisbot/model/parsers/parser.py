@@ -1,6 +1,6 @@
 import os
 import pickle
-from datetime import date, datetime
+from datetime import date, datetime, time
 
 from analysisbot.database.mongodb import MongoManager
 from analysisbot.model.analysis.preprocessing import Preprocessing
@@ -29,7 +29,7 @@ class Parser(object):
         MongoManager.update_data(
             'processed_data',
             {"type": self.type, "source": source, "year": date.year, "month": date.month}, 
-            {"full": datetime.now()}
+            {"full": datetime.combine(datetime.now().date, time(23,59))}
         )
         # else:
         #     MongoManager.update_data(
