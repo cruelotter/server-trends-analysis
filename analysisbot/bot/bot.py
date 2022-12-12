@@ -163,7 +163,7 @@ def run_bot():
     app.add_handlers([profile_cmd_handler, profile_msg_handler], 2)
     
     
-    get_trends_msg_handler = MessageHandler(filters=filters.Regex(r'Расчитать тренды'), callback=threading.Thread(target=get_trends_manager).start(), block=False)
+    get_trends_msg_handler = MessageHandler(filters=filters.Regex(r'Расчитать тренды'), callback=get_trends_manager, block=False)
     get_trends_cmd_handler = CommandHandler('get_trends', get_trends_manager, block=False)
     app.add_handlers([get_trends_cmd_handler, get_trends_msg_handler], 3)
     

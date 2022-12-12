@@ -7,6 +7,7 @@ from telegram.ext import (
     filters,
 )
 import asyncio
+import threading
 
 from analysisbot.logging.logger import _logger
 from analysisbot.model.pipeline import Pipeline
@@ -32,10 +33,14 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     chat_id = update.effective_message.chat_id
     
     await context.bot.send_message(chat_id, text=f"Модель запущена. Пожалуйста, подождите, процесс сбора и обработки данных может занять длительное время")
-    usr = UserManager.get_from_db(chat_id)
-    _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources])
-    pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources)
-    file, trends = pipeline.run()
+    # usr = UserManager.get_from_db(chat_id)
+    # _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources])
+    # pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources)
+    # file, trends = pipeline.run()
+    #!------
+    file, trends = threading.Thread(target=get_trends).start()
+    #!------
+    
     string_trend_list = ""
     for i,word in enumerate(trends['word'].tolist(), start=1):
         string_trend_list += f"{i}. {word}\n"
@@ -47,3 +52,11 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     _logger.warning("Pipeline ran successfully")
     # await context.bot.send_message(chat_id, text=f"Обработка завершена успешно!\n{trends}")
     
+def get_trends(chat_id):
+    _logger.warning("Thread started")
+    usr = UserManager.get_from_db(chat_id)
+    _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources])
+    pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources)
+    file, trends = pipeline.run()
+    _logger.warning("Thread finished")
+    return file, trends
