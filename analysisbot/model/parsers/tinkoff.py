@@ -31,19 +31,24 @@ class ParserTinkoff(Parser):
                 for branchCut in branchCuts:
                     branchCut.click()
                 time.sleep(5)
+                driver.execute_script("window.scrollTo(0, 0);")
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 self.getButtons(driver)
         except:
             return 
     
-    def getComments(self):
-        url = '/discuss/overvalued-movies'
+    def get_comments(self, url):
+        # url = '/discuss/overvalued-movies'
         # url = '/discuss/itogi-biznesa-2022'
         service = ChromeService(executable_path=ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service)
         driver.get(f'https://journal.tinkoff.ru{url}/')
-        button = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'expandButton')]")))
-        button.click()
+        try:
+            button = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'expandButton')]")))
+            button.click()
+        except Exception as e:
+            _logger.error(e)
+        driver.execute_script("window.scrollTo(0, 0);")
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         self.getButtons(driver)
         time.sleep(5)
@@ -56,11 +61,11 @@ class ParserTinkoff(Parser):
         for el in elements:
             comments.append(el.text)
             # print(el.text)
-        return " ".join(comments)
+        return "\n".join(comments)
 
         
         
-    def get_posts(self, page: BeautifulSoup, queue, chat_name, posts):
+    def get_posts(self, page: BeautifulSoup, queue, chat_name, posts, current_month):
         # news = page.find_all('a', class_="link--sKzdE")
         cards = page.find_all('div', class_=re.compile("^card--\S+"))
         headers = [c.find('div', class_=re.compile("^header--\S+")) for c in cards]
@@ -68,7 +73,6 @@ class ParserTinkoff(Parser):
         news =[h.find('a', class_=re.compile("^link--\S+")) for h in headers]
 
         # posts = []
-        current_month = queue[-1]
         for link in news:
             try:
                 url = link.get('href')
@@ -104,12 +108,15 @@ class ParserTinkoff(Parser):
                                 t: str = p.get_text()
                                 text.append(t.replace("\xa0", " "))
 
+                            comments = self.get_comments(url)
+                            
                             post = {
                                 'ref': f'https://journal.tinkoff.ru{url}',
                                 'text': " ".join(text),
                                 'date': msg_date,
                                 'views': stats['views'],
-                                'reactions': stats['comments']+stats['favoritesCount']
+                                'reactions': stats['comments']+stats['favoritesCount'],
+                                # 'comments':comments
                             }
                             posts.append(post)
                     elif msg_date < queue[0]:
@@ -132,13 +139,14 @@ class ParserTinkoff(Parser):
     def get_history(self, channel: str, queue):
         url_list = [f"/flows/{channel}"]
         data = []
+        current_month = queue[-1]
         while len(url_list)>0:
             url = url_list.pop()
             _logger.info(f'https://journal.tinkoff.ru{url}/')
             r = requests.get(f'https://journal.tinkoff.ru{url}/')
             page = BeautifulSoup(r.text, 'html.parser')
             
-            out_date, posts = self.get_posts(page, queue, channel, data)
+            out_date, posts = self.get_posts(page, queue, channel, data, current_month)
             data.extend(posts)
             # del posts
             print(out_date)
