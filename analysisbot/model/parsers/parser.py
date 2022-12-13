@@ -29,7 +29,7 @@ class Parser(object):
         MongoManager.update_data(
             'processed_data',
             {"type": self.type, "source": source, "year": date.year, "month": date.month}, 
-            {"full": datetime.combine(datetime.now().date, time(23,59))}
+            {"full": datetime.now()}
         )
         # else:
         #     MongoManager.update_data(
