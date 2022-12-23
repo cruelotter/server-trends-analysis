@@ -74,6 +74,13 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     source_list = SegmentManager.get_filtered_sources(filters['age'], filters['gender'], filters['geo'])
     # source_list = filter_sources(tuple(filters['age']), filters['gender'], filters['geo'])
     _logger.info(source_list)
+    if source_list is None or len(source_list)==0:
+        await update.message.reply_text(
+        "Извините, источники для данного сегмента не найдены, попробуйте другие настройки фильтров",
+        reply_markup=ReplyKeyboardMarkup(
+        MAIN_KEYBOARD, resize_keyboard=True
+        )
+    )
     UserManager.set_sources(update.effective_chat.id, source_list)
     
     return ConversationHandler.END
