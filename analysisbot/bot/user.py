@@ -34,7 +34,7 @@ class Filters:
                        dict['age'], dict['gender'],
                        dict['geo'])
     
-    @staticmethod
+    
     def to_dict(self):
         return {
         'id': self.id,
