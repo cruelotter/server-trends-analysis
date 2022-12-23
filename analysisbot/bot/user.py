@@ -27,6 +27,14 @@ class Filters:
             self.gender = found['gender']
             self.geo = found['geo']
     
+    
+    @staticmethod      
+    def from_dict(dict):
+        return Filters(dict['id'], dict['topic'],
+                       dict['age'], dict['gender'],
+                       dict['geo'])
+    
+    @staticmethod
     def to_dict(self):
         return {
         'id': self.id,
@@ -34,7 +42,8 @@ class Filters:
         'age':self.age,
         'gender':self.gender,
         'geo':self.geo}
-        
+    
+    
     @staticmethod
     def check_exists(id):
         found: dict = MongoManager.find_data(
@@ -48,7 +57,8 @@ class Filters:
                 user.to_dict()
             )
             _logger.info(found if found is not None else f"User not found. Creating new...{json.dumps(user.to_dict(), indent=2)}")
-        
+    
+       
     @staticmethod
     def set_topic(id, topic):
         Filters.check_exists(id)
@@ -65,7 +75,8 @@ class Filters:
             {'_id': id},
             {'age': age})
         _logger.info('Age filter updated')
-        
+    
+       
     @staticmethod
     def set_gender(id, gender):
         Filters.check_exists(id)
@@ -81,7 +92,11 @@ class Filters:
             'filters',
             {'_id': id},
             {'geo': geo})
-    
+        
+    @staticmethod
+    def get_filters(id):
+        found = MongoManager.find_data('filters',{'_id': id})
+        return Filters.from_dict(found)
 
 class User:
     def __init__(self, id, sources=DEFAULT_SOURCES, history: int=DEFAULT_HISTORY,

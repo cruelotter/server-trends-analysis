@@ -50,13 +50,14 @@ class Pipeline:
         return typed_source_list
         
     
-    def __init__(self, user_id, history_duration: int, trend_window: int, source_list: str) -> None:
+    def __init__(self, user_id, history_duration: int, trend_window: int, source_list: str, seg_type) -> None:
         self.user_id = user_id
         self.history_duration = history_duration
         self.history_end = datetime.today().date()
         self.history_start = (self.history_end - timedelta(days=history_duration*30)).replace(day=1)
         self.trend_window = trend_window
         self.source_list = self.check_source_list(source_list)
+        self.seg_type = seg_type
         
         
     def check_existance(self):

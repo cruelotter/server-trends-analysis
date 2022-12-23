@@ -354,13 +354,14 @@ class TrendDetection:
     
     
     @staticmethod
-    def get_top_data(source_dict: dict, process: list, period: int, trend_window: int, number:int):
+    def get_top_data(source_dict: dict, process: list, period: int, trend_window: int, number:int, seg_type):
         start_date = datetime.now()
         
         df = TrendDetection.mean_differance(source_dict, start_date, period, remerge=True, mcdm=False)
         TrendDetection.mean_score_ratio(df, 1)
         
         df.sort_values(by='growth', ascending=False, inplace=True)
+        df['word'].to_csv(f'{seg_type}_dict.csv')
         df = df.iloc[:number]
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
         df = df[['word', 'previous', 'current', 'growth']]
