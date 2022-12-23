@@ -64,6 +64,15 @@ async def set_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "Отмена",
+        reply_markup=ReplyKeyboardMarkup(
+            MAIN_KEYBOARD, resize_keyboard=True
+        )
+    )
+    return ConversationHandler.END
+
 
 conversation_choice_segments = ConversationHandler(
         entry_points=[CommandHandler("select_segment", select_segment, block=False),
@@ -79,5 +88,5 @@ conversation_choice_segments = ConversationHandler(
             #     CommandHandler("cancel", cancel, block=False),
             # ],
         },
-        # fallbacks=[CommandHandler("cancel", cancel, block=False)],
+        fallbacks=[CommandHandler("cancel", cancel, block=False)],
     )
