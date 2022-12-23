@@ -136,6 +136,7 @@ class SegmentManager:
     
     def age_filter(s, prefered):
         dict_age = json.loads(s)
+        _logger.info(dict_age)
         sum = 0
         for category in prefered:
             sum += dict_age[category]
@@ -159,7 +160,13 @@ class SegmentManager:
             if age != 'ALL':
                 sources['age_filter'] = sources['age'].apply(lambda x: SegmentManager.age_filter(x))
                 sources.drop(sources[sources['age_filter']==False].index, inplace=True)
-            return sources['name'].tolist()
+            
+            lst = sources['name'].tolist()
+            if len(lst)==0 or lst is None:
+                _logger.error("No sources found")
+                return []
+            else:
+                return lst
         
         except Exception as e:
             _logger.error(e)
