@@ -119,7 +119,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #             context.job_queue.run_daily(get_trends_manager, chat_id=usr['_id'], name=str(usr['_id']), time=time().fromisoformat(usr['schedule_time']), days=t_days)
 
 
-async def error(update: object, context: ContextTypes.DEFAULT_TYPE):
+async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=ERROR,
