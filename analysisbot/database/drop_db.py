@@ -1,5 +1,4 @@
 from pymongo.mongo_client import MongoClient
-from analysisbot.logging.logger import _logger
 import os
 
 if __name__ == '__main__':
@@ -8,5 +7,5 @@ if __name__ == '__main__':
     
     #! drop all
     client.drop_database('trends_analysis')
-    _logger.warning('database [trends_analysis] cleared')
+    print('database [trends_analysis] cleared')
     os.remove('storage/ref.csv')
