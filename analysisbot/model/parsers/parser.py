@@ -12,14 +12,14 @@ class Parser(object):
     def __init__(self) -> None:
         self.preprocessor = Preprocessing()
  
-    def save_and_clear(self, raw_data, source: str, date: date):
+    def save_and_clear(self, raw_data, source: str, date: date, segment_id):
         path = "./storage/data/{}/{}/{}/{}".format(self.type, source, date.year, str(date.month).zfill(2))
         os.makedirs(path[:-3], exist_ok=True)
         print(path)
         with open(file=path+"raw.pkl", mode="wb") as file:
             pickle.dump(raw_data, file)
             
-        stats_data = self.preprocessor.raw_to_stats(raw_data, path)
+        stats_data = self.preprocessor.raw_to_stats(raw_data, path, segment_id)
         stats_data.to_csv(path+"stats.csv")
         del stats_data
         raw_data.clear()
@@ -38,6 +38,6 @@ class Parser(object):
         #         {"full": datetime(1900, 1,1)}
         #     )
     
-    def get_source_data(self, chat_name: str, queue):
+    def get_source_data(self, chat_name: str, queue, segment_id):
         pass
     

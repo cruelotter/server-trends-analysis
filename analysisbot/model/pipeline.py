@@ -107,7 +107,8 @@ class Pipeline:
                         _logger.warning('Nothing to parse')
                     else:
                         print(parse_queue[type][source])
-                        success = parser.get_source_data(source, parse_queue[type][source])
+                        seg_type = self.seg_type
+                        success = parser.get_source_data(source, parse_queue[type][source], seg_type)
                         _logger.info(success)
                     
                 except Exception as e:

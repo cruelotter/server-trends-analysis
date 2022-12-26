@@ -65,7 +65,7 @@ class ParserTinkoff(Parser):
 
         
         
-    def get_posts(self, page: BeautifulSoup, queue, chat_name, posts, current_month):
+    def get_posts(self, page: BeautifulSoup, queue, chat_name, posts, current_month, segment_id):
         # news = page.find_all('a', class_="link--sKzdE")
         cards = page.find_all('div', class_=re.compile("^card--\S+"))
         headers = [c.find('div', class_=re.compile("^header--\S+")) for c in cards]
@@ -91,7 +91,7 @@ class ParserTinkoff(Parser):
                     if current_month != c:
                         # print('cur', current_month)
                         print(msg_date)
-                        self.save_and_clear(posts, chat_name, current_month)
+                        self.save_and_clear(posts, chat_name, current_month, segment_id)
                         current_month = msg_date.replace(day=1)
 
                     if current_month in queue:
@@ -108,7 +108,7 @@ class ParserTinkoff(Parser):
                                 t: str = p.get_text()
                                 text.append(t.replace("\xa0", " "))
 
-                            comments = self.get_comments(url)
+                            # comments = self.get_comments(url)
                             
                             post = {
                                 'ref': f'https://journal.tinkoff.ru{url}',
@@ -121,7 +121,7 @@ class ParserTinkoff(Parser):
                             posts.append(post)
                     elif msg_date < queue[0]:
                         print(msg_date, queue[0])
-                        self.save_and_clear(posts, chat_name, current_month)
+                        self.save_and_clear(posts, chat_name, current_month, segment_id)
                         return True, posts
                     else: continue
                 except:
@@ -136,7 +136,7 @@ class ParserTinkoff(Parser):
         return False, posts
 
 
-    def get_history(self, channel: str, queue):
+    def get_history(self, channel: str, queue, segment_id):
         url_list = [f"/flows/{channel}"]
         data = []
         current_month = queue[-1]
@@ -146,7 +146,7 @@ class ParserTinkoff(Parser):
             r = requests.get(f'https://journal.tinkoff.ru{url}/')
             page = BeautifulSoup(r.text, 'html.parser')
             
-            out_date, posts = self.get_posts(page, queue, channel, data, current_month)
+            out_date, posts = self.get_posts(page, queue, channel, data, current_month, segment_id)
             data.extend(posts)
             # del posts
             print(out_date)
@@ -165,51 +165,51 @@ class ParserTinkoff(Parser):
         return True
         
     
-    def get_source_data(self, chat_name: str, queue):
+    def get_source_data(self, chat_name: str, queue, segment_id):
         _logger.warning(f"{chat_name}")
-        data = self.get_history(chat_name, queue)
+        data = self.get_history(chat_name, queue, segment_id)
         _logger.warning(f"{chat_name} parsed")
         return data
     
     
-class ParserTest():
-    def __init__(self) -> None:
-        self.type = "tinkoff_journal"
+# class ParserTest():
+#     def __init__(self) -> None:
+#         self.type = "tinkoff_journal"
         
     
-    def getButtons(self, driver):
-        time.sleep(5)
-        print('getButtons')
-        try:
-            branchCuts = driver.find_elements(By.XPATH, "//button[contains(@class, 'branchCut')]")
-            print(len(branchCuts))
-            if len(branchCuts) > 0:
-                for branchCut in branchCuts:
-                    branchCut.click()
-                time.sleep(5)
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                self.getButtons(driver)
-        except:
-            return 
+#     def getButtons(self, driver):
+#         time.sleep(5)
+#         print('getButtons')
+#         try:
+#             branchCuts = driver.find_elements(By.XPATH, "//button[contains(@class, 'branchCut')]")
+#             print(len(branchCuts))
+#             if len(branchCuts) > 0:
+#                 for branchCut in branchCuts:
+#                     branchCut.click()
+#                 time.sleep(5)
+#                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+#                 self.getButtons(driver)
+#         except:
+#             return 
 
-    def getSite(self):
-        url = '/discuss/overvalued-movies'
-        # url = '/discuss/itogi-biznesa-2022'
-        service = ChromeService(executable_path=ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service)
-        driver.get(f'https://journal.tinkoff.ru{url}/')
-        button = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'expandButton')]")))
-        button.click()
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        self.getButtons(driver)
-        time.sleep(5)
-        # commentsWrapper = driver.find_element(By.XPATH, "//div[contains(@class, 'commentsWrap')]")
-        # commentsWrapper.execute_script()
-        elements = driver.find_elements(By.XPATH, "//p[contains(@class, 'text')]")
-        print(len(elements))
+#     def getSite(self):
+#         url = '/discuss/overvalued-movies'
+#         # url = '/discuss/itogi-biznesa-2022'
+#         service = ChromeService(executable_path=ChromeDriverManager().install())
+#         driver = webdriver.Chrome(service=service)
+#         driver.get(f'https://journal.tinkoff.ru{url}/')
+#         button = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, "//button[contains(@class, 'expandButton')]")))
+#         button.click()
+#         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+#         self.getButtons(driver)
+#         time.sleep(5)
+#         # commentsWrapper = driver.find_element(By.XPATH, "//div[contains(@class, 'commentsWrap')]")
+#         # commentsWrapper.execute_script()
+#         elements = driver.find_elements(By.XPATH, "//p[contains(@class, 'text')]")
+#         print(len(elements))
         
-        for el in elements: 
-            print(el.text)
+#         for el in elements: 
+#             print(el.text)
         # WebDriverWait(driver, timeout=30).until(lambda d: d.find_element(By.CSS_SELECTOR, '''div[itemprop="comment"'''))
         
         # print(driver.title)
@@ -223,9 +223,9 @@ class ParserTest():
         #     print(text)
 
 
-if __name__=="__main__":
-    p = ParserTest()
-    p.getSite()
+# if __name__=="__main__":
+#     p = ParserTest()
+#     p.getSite()
     # s = '/workplaces/'
     # # "https://journal.tinkoff.ru/flows/crisis/"
     # # chat_name = 'noboring_finance'

@@ -30,13 +30,17 @@ class Preprocessing:
     
     
     # def word_to_id(self, word: str, date: datetime, ref, path):
-    def word_to_id(self, word: str):
+    def word_to_id(self, word: str, segment_id):
         '''Записывает слово в словарь, возвращает id слова'''
         doc = MongoManager.find_data('dictionary', {'word': word})
         if doc is None:
             c = MongoManager.count('dictionary')
             res =  MongoManager.insert_data('dictionary', {'_id': c, 'word': word})
         else: res: int =  doc['_id']
+        
+        doc_segment = MongoManager.find_data(f'{segment_id}', {'_id' : res})
+        if doc_segment is None:
+            res =  MongoManager.insert_data(f'{segment_id}', {'_id': c, 'word': word})
         # MongoManager.insert_data('token_ref', {'token': res, 'year': date.year, 'month': date.month, 'path': path, 'ref': ref})
         return res
     
@@ -54,7 +58,7 @@ class Preprocessing:
         return emoji_pattern.sub(r'', string)
     
     
-    def lemmatizer(self, text: str):
+    def lemmatizer(self, text: str, segment_id):
         """lemmatizer
         Предобработка текста: нижний регистр, фильтр частей речи, пунктуации и стопслов, лемматизация 
 
@@ -72,7 +76,7 @@ class Preprocessing:
             and (not token.is_digit) and (not any([char.isdigit() for char in token.text])) and (len(token.text)>2):
                 lemma = token.lemma_
                 if not (lemma in self.stop_words):
-                    lemma_id = self.word_to_id(lemma)
+                    lemma_id = self.word_to_id(lemma, segment_id)
                     filtered_list.append(str(lemma_id))
         del doc
         counter = Counter(filtered_list)
@@ -84,7 +88,7 @@ class Preprocessing:
         return counter
     
 
-    def raw_to_stats(self, raw_data, path):
+    def raw_to_stats(self, raw_data, path, segment_id):
         """raw_to_stats
         Данные после лемматизации собираются в таблицу с колонками 'token', 'date', 'frequency', 'views', 'reactions'
 
@@ -105,7 +109,7 @@ class Preprocessing:
         for i, df in enumerate(raw_data):
             # df = raw_data[i]
             date = datetime.combine(df['date'], time(0,0))
-            freq_dict = self.lemmatizer(df['text'])
+            freq_dict = self.lemmatizer(df['text'], segment_id)
             list_df = []
             for token in freq_dict:
                 pd.DataFrame({'token': token, 'year': date.year, 'month': date.month, 'path': path, 'ref': str(df['ref'])}, [token]).to_csv(f'./storage/ref.csv', mode='a', index=False, header=False)

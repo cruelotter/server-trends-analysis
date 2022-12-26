@@ -46,8 +46,8 @@ async def preset_segment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 async def set_segment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     name = update.effective_message.text
-    sources = SegmentManager.get_preset_sources(update.effective_chat.id, name)
-    UserManager.set_sources(update.effective_chat.id, sources)
+    id, sources = SegmentManager.get_preset_sources(update.effective_chat.id, name)
+    UserManager.set_sources(update.effective_chat.id, id, sources)
     await update.message.reply_text(
         "Подобраны источники для данного сегмента",
         reply_markup=ReplyKeyboardMarkup(

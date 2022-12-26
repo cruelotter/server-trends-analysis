@@ -34,8 +34,8 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     
     await context.bot.send_message(chat_id, text=f"Модель запущена. Пожалуйста, подождите, процесс сбора и обработки данных может занять длительное время")
     usr = UserManager.get_from_db(chat_id)
-    _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources])
-    pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources)
+    _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources, usr.segment_id])
+    pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources, usr.segment_id)
     file, trends = pipeline.run()
     #!------
     # file, trends = threading.Thread(target=get_trends).start()

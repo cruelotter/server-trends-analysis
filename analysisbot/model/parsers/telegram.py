@@ -25,11 +25,11 @@ class ParserTelegram(Parser):
         
     async def start(self):
         await self.session.start()
+    
         
     async def stop(self):
         await self.session.stop()
         
-    
     
     def remove_emoji(self, string):
         emoji_pattern = re.compile("["
@@ -52,7 +52,7 @@ class ParserTelegram(Parser):
         return count
         
     
-    async def get_history(self, chat_name: str, queue) -> bool:
+    async def get_history(self, chat_name: str, queue, segment_id) -> bool:
         # session = self.session
         # await session.start()
         res = True
@@ -69,7 +69,7 @@ class ParserTelegram(Parser):
                 
                 c = msg_date.replace(day=1)
                 if current_month != c:
-                    self.save_and_clear(data, chat_name, current_month)
+                    self.save_and_clear(data, chat_name, current_month, segment_id)
                     current_month = msg_date.replace(day=1)
                 
                 if current_month in queue:
@@ -88,44 +88,29 @@ class ParserTelegram(Parser):
                                 'reactions' : self.reaction_count(msg.reactions)
                                 })
                 elif (msg_date < queue[0]):
-                    self.save_and_clear(data, chat_name, current_month)
+                    self.save_and_clear(data, chat_name, current_month, segment_id)
                     _logger.warning(f"{chat_name} parsed")
                     break
             res = True
             print(res)
         except:
             _logger.error(f"Could not access t.me/{chat_name}")
-            # await self.session.stop()
             res = False
-        
-        # await session.stop()
-        print("session stopped")
-        return res
+        finally:
+            print("session stopped")
+            return res
     
     
-    async def temp(self, chat_name: str, queue):
+    async def temp(self, chat_name: str, queue, segment_id):
         await self.start()
-        res = await self.get_history(chat_name, queue)
+        res = await self.get_history(chat_name, queue, segment_id)
         await self.stop()
-        # task = asyncio.create_task(self.get_history(chat_name, queue))
-        # res = False
-        # res = await task
-        
-        # try:
-        #     res = await task
-        # except Exception as e:
-        #     print(e)
-            # await self.session.stop()
         return res
     
        
-    def get_source_data(self, chat_name: str, queue) -> bool:
-        
-        _logger.warning(f"{chat_name}")
-        # data = self.get_history(session, chat_name, start, end)
-        # data = session.run(self.get_history(session, chat_name, start, end))
-        # res = asyncio.run(self.temp(chat_name, queue))
-        res = asyncio.get_event_loop().run_until_complete(self.temp(chat_name, queue))
+    def get_source_data(self, chat_name: str, queue, segment_id) -> bool:
+        _logger.warning(chat_name)
+        res = asyncio.get_event_loop().run_until_complete(self.temp(chat_name, queue, segment_id))
         return res
     
 if __name__=="__main__":

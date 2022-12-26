@@ -134,9 +134,11 @@ class SegmentManager:
             )
     
     
-    def age_filter(s, prefered):
+    @staticmethod
+    def age_filter(s: str, prefered):
+        s = s.replace(";", ",")
         dict_age = json.loads(s)
-        _logger.info(dict_age)
+        # _logger.info(dict_age)
         sum = 0
         for category in prefered:
             sum += dict_age[category]
@@ -148,27 +150,33 @@ class SegmentManager:
     
     @staticmethod   
     def get_filtered_sources(age, gender, geo):
+        _logger.info(f"get_filter_sources args: {age}, {gender}, {geo}")
+        # try:
+        sources = pd.read_csv('./analysisbot/bot/sources.csv', index_col=0)
+        # sources = sources.convert_dtypes()
+        # print(sources.to_string())
         try:
-            sources = pd.read_csv('./analysisbot/bot/sources.csv', index_col=0)
             if gender != 'ALL':
                 if gender=='M':
                     sources.drop(sources[(sources['male']<50)].index, inplace=True)
+                    # print('male del')
                 elif gender=='F':
                     sources.drop(sources[(sources['female']<50)].index, inplace=True)
             if geo != 'ALL':
                 sources.drop(sources[(sources['geo']!=geo) & (sources['geo']!='ALL')].index, inplace=True)
             if age != 'ALL':
-                sources['age_filter'] = sources['age'].apply(lambda x: SegmentManager.age_filter(x))
+                sources['age_filter'] = sources['age_pct'].apply(lambda x: SegmentManager.age_filter(x, age))
                 sources.drop(sources[sources['age_filter']==False].index, inplace=True)
             
             lst = sources['name'].tolist()
             if len(lst)==0 or lst is None:
                 _logger.error("No sources found")
-                return []
+                return 1, []
             else:
-                return lst
+                return 1, lst
         
         except Exception as e:
+            _logger.error("there is an error in filters")
             _logger.error(e)
     
     
@@ -179,7 +187,7 @@ class SegmentManager:
             {'user_id': id,
              'name': name}
             )
-        return found['source_list']    
+        return found['_id'], found['source_list']
 
     
     @staticmethod
@@ -190,6 +198,8 @@ class SegmentManager:
              'name': name},
             {'source_list': source_list}
         )
+        found = MongoManager.find_data('segments', {'user_id': id, 'name': name})
+        return found[-1]
         
     
     @staticmethod
@@ -201,10 +211,10 @@ class SegmentManager:
         return found
         
     
-    @staticmethod
-    def set_sources_filtered(id):
-        filters = Filters.get_filters()
-        source_list = SegmentManager.filter_sources(filters.age, filters.gender, filters.geo)
-        source_list = " ".join(source_list)
-        SegmentManager.set_sources_custom(id, name, source_list)
+    # @staticmethod
+    # def set_sources_filtered(id):
+    #     filters = Filters.get_filters()
+    #     source_list = SegmentManager.filter_sources(filters.age, filters.gender, filters.geo)
+    #     source_list = " ".join(source_list)
+    #     SegmentManager.set_sources_custom(id, name, source_list)
      

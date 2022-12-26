@@ -24,7 +24,7 @@ class ParserVK(parser.Parser):
             _logger.exception(e)
     
     
-    def get_history(self, chat_name, queue, retry=True):
+    def get_history(self, chat_name, queue, segment_id, retry=True):
         data = []
         current_month = queue[-1]
         try:
@@ -35,7 +35,7 @@ class ParserVK(parser.Parser):
                     c = post_date.replace(day=1)
                     if current_month != c:
                         # print('cur', current_month)
-                        self.save_and_clear(data, chat_name, current_month)
+                        self.save_and_clear(data, chat_name, current_month, segment_id)
                         current_month = post_date.replace(day=1)
                     if current_month in queue:
                         data.append({
@@ -56,16 +56,18 @@ class ParserVK(parser.Parser):
                 import time
                 time.sleep(30)
                 if retry:
-                    data = self.get_history(self, chat_name, queue, retry=False)
+                    data = self.get_history(self, chat_name, queue, segment_id, retry=False)
                 else:
                     raise e
         return data
         
-    def get_source_data(self, chat_name, queue):
+        
+    def get_source_data(self, chat_name, queue, segment_id):
         _logger.warning(f"{chat_name}")
-        data = self.get_history(chat_name, queue)
+        data = self.get_history(chat_name, queue, segment_id)
         # _logger.warning(f"{chat_name} {len(data)} parsed")
         return data
+    
     
 # if __name__=="__main__":
 #     p = ParserVK()

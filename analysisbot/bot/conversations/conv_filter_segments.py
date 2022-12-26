@@ -71,7 +71,7 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     filters = Filters(update.effective_chat.id).to_dict()
     _logger.info(filters)
-    source_list = SegmentManager.get_filtered_sources(filters['age'], filters['gender'], filters['geo'])
+    id, source_list = SegmentManager.get_filtered_sources(filters['age'], filters['gender'], filters['geo'])
     # source_list = filter_sources(tuple(filters['age']), filters['gender'], filters['geo'])
     _logger.info(source_list)
     if source_list is None or len(source_list)==0:
@@ -81,7 +81,7 @@ async def set_geo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         MAIN_KEYBOARD, resize_keyboard=True
         )
     )
-    UserManager.set_sources(update.effective_chat.id, source_list)
+    UserManager.set_sources(update.effective_chat.id, id, source_list)
     
     return ConversationHandler.END
 
