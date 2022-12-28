@@ -178,44 +178,49 @@ class UserManager:
     @staticmethod
     def set_status(id, status):
         UserManager.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'users',
             {'_id': id},
             {'status': status})
+        _logger.info(update)
     
     @staticmethod    
     def set_history_duration(id, history_duration):
         UserManager.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'users',
             {'_id': id},
             {'history_duration': history_duration})
+        _logger.info(update)
      
     @staticmethod   
     def set_trend_period(id, trend_period):
         UserManager.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'users',
             {'_id': id},
             {'trend_period': trend_period})
+        _logger.info(update)
     
     @staticmethod   
     def set_schedule_days(id, schedule_days: tuple):
         UserManager.check_exists(id)
         s = [str(x) for x in schedule_days]
         s_schedule_days= " ".join(s)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'users',
             {'_id': id},
             {'schedule_days': s_schedule_days})
+        _logger.info(update)
     
     @staticmethod  
     def set_schedule_time(id, schedule_time: time):
         UserManager.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'users',
             {'_id': id},
             {'schedule_time': schedule_time.isoformat()})
+        _logger.info(update)
         
     @staticmethod   
     def set_sources(id, segment_id, sources):
@@ -224,10 +229,11 @@ class UserManager:
         for s in sources:
             long_str+= s
             long_str+=' '
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'users',
             {'_id': id},
             {'segment_id':segment_id, 'sources': long_str})
+        _logger.info(update)
        
     @staticmethod
     def get_all():

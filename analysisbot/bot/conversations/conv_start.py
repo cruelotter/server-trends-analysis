@@ -118,7 +118,7 @@ async def set_custom_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         text=TXT_SCHEDULE_DAYS,
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: Раз в 3 дня"
+            reply_keyboard, one_time_keyboard=True, input_field_placeholder="default: Раз в 3 дня", resize_keyboard=True
         ),
     )
     return SCHEDULE_D

@@ -47,7 +47,8 @@ class MongoManager:
     @staticmethod
     def update_data(collection_name: str, query_element, new_value):
         collection = MongoManager.__instance[collection_name]
-        collection.update_one(query_element, {'$set': new_value}, upsert=True)
+        res = collection.update_one(query_element, {'$set': new_value}, upsert=True)
+        return (collection_name, query_element, new_value)
     
     @staticmethod   
     def count(collection_name: str):
