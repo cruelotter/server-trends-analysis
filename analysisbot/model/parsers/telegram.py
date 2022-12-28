@@ -1,7 +1,6 @@
 import toml
 import re
 import asyncio
-import pickle
 from datetime import datetime, date
 from pyrogram import Client
 from pyrogram.types import MessageReactions, Reaction, Message
@@ -62,43 +61,44 @@ class ParserTelegram(Parser):
         data = []
         print(queue)
         current_month = queue[-1]
-        try: 
-            async for msg in self.session.get_chat_history(chat_id=chat_name):
-                msg: Message
-                msg_date: date = msg.date.date()
-                
-                c = msg_date.replace(day=1)
-                if current_month != c:
-                    self.save_and_clear(data, chat_name, current_month, segment_id)
-                    current_month = msg_date.replace(day=1)
-                
-                if current_month in queue:
-                    # print('yes')
-                    if msg.service is None:
-                        txt = ''.join(filter(None, [msg.text, msg.caption]))
-                        txt = self.remove_emoji(txt)
-                        if any([bool(stop in txt.lower()) for stop in stopwords]):
-                            continue
-                        elif txt != '':
-                            data.append({
-                                'ref' : str(msg.id),
-                                'text' : txt,
-                                'date' : msg_date,
-                                'views' : msg.views,
-                                'reactions' : self.reaction_count(msg.reactions)
-                                })
-                elif (msg_date < queue[0]):
-                    self.save_and_clear(data, chat_name, current_month, segment_id)
-                    _logger.warning(f"{chat_name} parsed")
-                    break
-            res = True
-            print(res)
-        except:
-            _logger.error(f"Could not access t.me/{chat_name}")
-            res = False
-        finally:
-            print("session stopped")
-            return res
+        # try: 
+        async for msg in self.session.get_chat_history(chat_id=chat_name):
+            msg: Message
+            msg_date: date = msg.date.date()
+            
+            c = msg_date.replace(day=1)
+            if current_month != c:
+                self.save_and_clear(data, chat_name, current_month, segment_id)
+                current_month = msg_date.replace(day=1)
+            
+            if current_month in queue:
+                # print('yes')
+                if msg.service is None:
+                    txt = ''.join(filter(None, [msg.text, msg.caption]))
+                    txt = self.remove_emoji(txt)
+                    if any([bool(stop in txt.lower()) for stop in stopwords]):
+                        continue
+                    elif txt != '':
+                        data.append({
+                            'ref' : str(msg.id),
+                            'text' : txt,
+                            'date' : msg_date,
+                            'views' : msg.views,
+                            'reactions' : self.reaction_count(msg.reactions)
+                            })
+            elif (msg_date < queue[0]):
+                self.save_and_clear(data, chat_name, current_month, segment_id)
+                _logger.warning(f"{chat_name} parsed")
+                break
+        res = True
+        print(res)
+        # except Exception as e:
+        #     _logger.error(f"Could not access t.me/{chat_name}")
+        #     _logger.error(e)
+        #     res = False
+        # finally:
+        print("session stopped")
+        return res
     
     
     async def temp(self, chat_name: str, queue, segment_id):

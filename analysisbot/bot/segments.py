@@ -14,6 +14,7 @@ BUSINESS = [
 't.me/coinkeeper',
 't.me/TochkaUP',
 't.me/BizLike',
+'t.me/hour25',
 'vk.com/noboring_finance',
 'https://journal.tinkoff.ru/flows/business-russia/',
 'https://journal.tinkoff.ru/flows/crisis/',
@@ -72,7 +73,7 @@ class Segment:
     }
     
     def __init__(self, user_id, name='Безымянный', source_list=[]) -> None:
-        self.user_id = id
+        self.user_id = user_id
         self.name = name
         self.source_list = source_list
         
@@ -85,25 +86,44 @@ class Segment:
 class SegmentManager:
     BaseSegmentList = [
         {'name':"Молодежь Москва",
-         'source_list':""},
+         'source_list':'''https://vk.com/public28905875 https://vk.com/nrnews24 
+         t.me/vcnews t.me/dvachannel t.me/Reddit t.me/vcnews t.me/hour25
+         https://journal.tinkoff.ru/flows/edu-news/ https://journal.tinkoff.ru/flows/opinion/
+         https://journal.tinkoff.ru/flows/hobby/'''},
         
         {'name':"Дети до 18 лет",
-         'source_list':""},
+         'source_list':'''https://vk.com/public28905875 https://vk.com/nrnews24 https://vk.com/club66678575
+         t.me/vcnews t.me/dvachannel t.me/Reddit t.me/vcnews'''},
         
         {'name':"Домохозяйки 30-45",
-         'source_list':""},
+         'source_list':'''https://vk.com/o_semje https://vk.com/happy_mom_kids 
+         https://vk.com/roditeli_i https://vk.com/melfmru t.me/melfm 
+         https://journal.tinkoff.ru/flows/edu-news/ https://journal.tinkoff.ru/flows/opinion/ 
+         https://journal.tinkoff.ru/flows/hobby/ https://journal.tinkoff.ru/flows/maternity-leave 
+         https://journal.tinkoff.ru/flows/love-hate-kids-purchase/ https://journal.tinkoff.ru/flows/baby/'''},
         
         {'name':"Родители Санкт-Петербург",
-         'source_list':""},
+         'source_list':'''https://t.me/mashmoyka https://t.me/fontankaspb t.me/melfm t.me/coinkeeper
+         https://journal.tinkoff.ru/flows/edu-news/ https://journal.tinkoff.ru/flows/hobby/
+         https://journal.tinkoff.ru/flows/maternity-leave/  https://journal.tinkoff.ru/flows/baby/
+         https://journal.tinkoff.ru/flows/love-hate-kids-purchase/ https://journal.tinkoff.ru/flows/baby/'''},
         
         {'name':"Рабочий класс 35-50 Сибирь",
-         'source_list':""},
+         'source_list':'''https://t.me/Taygainfo https://vk.com/noboring_finance https://vk.com/rambler 
+         t.me/FinZoZhExpert t.me/coinkeeper'''},
         
         {'name':"Молодая семья 20-30 Северо-Запад",
-         'source_list':""},
+         'source_list':'''t.me/melfm t.me/coinkeeper t.me/Reddit 
+         https://journal.tinkoff.ru/flows/edu-news/ https://journal.tinkoff.ru/flows/hobby/
+         https://journal.tinkoff.ru/flows/maternity-leave/  https://journal.tinkoff.ru/flows/baby/
+         https://journal.tinkoff.ru/flows/love-hate-kids-purchase/ https://journal.tinkoff.ru/flows/baby/ 
+         https://journal.tinkoff.ru/flows/goskontrol/'''},
         
         {'name':"Молодежь Дальний Восток",
-         'source_list':""},
+         'source_list':'''https://vk.com/public28905875 https://vk.com/nrnews24 
+         t.me/vcnews t.me/dvachannel t.me/Reddit t.me/vcnews t.me/hour25
+         https://journal.tinkoff.ru/flows/edu-news/ https://journal.tinkoff.ru/flows/opinion/
+         https://journal.tinkoff.ru/flows/hobby/'''},
     ]
         
     @staticmethod
@@ -171,9 +191,10 @@ class SegmentManager:
             lst = sources['name'].tolist()
             if len(lst)==0 or lst is None:
                 _logger.error("No sources found")
-                return 1, []
+                sources = pd.read_csv('./analysisbot/bot/sources.csv', index_col=0)
+                return str(1), sources['name']
             else:
-                return 1, lst
+                return str(1), lst
         
         except Exception as e:
             _logger.error("there is an error in filters")
@@ -187,7 +208,7 @@ class SegmentManager:
             {'user_id': id,
              'name': name}
             )
-        return found['_id'], found['source_list']
+        return str(found['_id']), found['source_list']
 
     
     @staticmethod
@@ -199,14 +220,15 @@ class SegmentManager:
             {'source_list': source_list}
         )
         found = MongoManager.find_data('segments', {'user_id': id, 'name': name})
-        return found[-1]
+        return found
         
     
     @staticmethod
     def get_user_segments(id):
         found = MongoManager.find_data(
             'segments',
-            {'user_id': id}
+            {'user_id': id},
+            multiple=True
         )
         return found
         

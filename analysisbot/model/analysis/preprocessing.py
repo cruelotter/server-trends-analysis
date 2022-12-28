@@ -2,10 +2,7 @@ import re
 import pandas as pd
 from datetime import date, datetime, time
 from collections import Counter
-# from string import punctuation
-# import textacy
 import spacy
-# import nltk
 
 from analysisbot.logging.logger import _logger
 from analysisbot.database.mongodb import MongoManager
@@ -29,19 +26,27 @@ class Preprocessing:
             'курсе', 'school', 'эфир', 'эфире', 'эфиру', 'приглашаем', 'ссылке', 'залетай', 'руб.'})
     
     
-    # def word_to_id(self, word: str, date: datetime, ref, path):
     def word_to_id(self, word: str, segment_id):
         '''Записывает слово в словарь, возвращает id слова'''
+        
         doc = MongoManager.find_data('dictionary', {'word': word})
+        
+        c = MongoManager.count('dictionary')
         if doc is None:
-            c = MongoManager.count('dictionary')
             res =  MongoManager.insert_data('dictionary', {'_id': c, 'word': word})
         else: res: int =  doc['_id']
+        # _logger.warning(res)
         
         doc_segment = MongoManager.find_data(f'{segment_id}', {'_id' : res})
-        if doc_segment is None:
-            res =  MongoManager.insert_data(f'{segment_id}', {'_id': c, 'word': word})
-        # MongoManager.insert_data('token_ref', {'token': res, 'year': date.year, 'month': date.month, 'path': path, 'ref': ref})
+        try:
+            if doc_segment is None:
+                MongoManager.insert_data(f'{segment_id}', {'_id': res, 'word': word})
+        except Exception as e:
+            print(word)
+            print(doc)
+            print(doc_segment)
+            print(e)
+            raise Exception(e)
         return res
     
     
@@ -104,6 +109,7 @@ class Preprocessing:
         Returns:
             pd.DataFrame: предобработанные данные
         """        
+        _logger.info(f"| {len(raw_data)} posts parsed")
         cols=['token', 'date', 'frequency', 'views', 'reactions']
         data = pd.DataFrame(columns=cols)
         for i, df in enumerate(raw_data):
@@ -130,6 +136,6 @@ class Preprocessing:
                     _logger.warning(f"{i} texts")
             del new_df
             
-        _logger.warning(f"{path} {len(data.index)} preprocessing done")
+        _logger.warning(f"{path} | {len(data.index)} tokens preprocessing done")
         data = data.fillna(0)
         return data

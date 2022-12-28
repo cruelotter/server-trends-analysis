@@ -53,6 +53,7 @@ class ParserVK(parser.Parser):
                     break
         except Exception as e:
             if str(e) == "[29] Rate limit reached":
+                _logger.error("[29] Rate limit reached")
                 import time
                 time.sleep(30)
                 if retry:
@@ -66,7 +67,7 @@ class ParserVK(parser.Parser):
         _logger.warning(f"{chat_name}")
         data = self.get_history(chat_name, queue, segment_id)
         # _logger.warning(f"{chat_name} {len(data)} parsed")
-        return data
+        return bool(data)
     
     
 # if __name__=="__main__":

@@ -1,0 +1,7 @@
+{'_id': ObjectId('63aab10cb004f7d13370e51f'), 'name': 'Молодежь Москва', 'source_list': '', 'user_id': 957739166}
+{'_id': ObjectId('63aab10cb004f7d13370e521'), 'name': 'Дети до 18 лет', 'source_list': '', 'user_id': 957739166}
+{'_id': ObjectId('63aab10cb004f7d13370e523'), 'name': 'Домохозяйки 30-45', 'source_list': 'https://vk.com/o_semje https://vk.com/happy_mom_kids https://vk.com/roditeli_i https://vk.com/melfmru', 'user_id': 957739166}
+{'_id': ObjectId('63aab10cb004f7d13370e525'), 'name': 'Родители Санкт-Петербург', 'source_list': '', 'user_id': 957739166}
+{'_id': ObjectId('63aab10cb004f7d13370e527'), 'name': 'Рабочий класс 35-50 Сибирь', 'source_list': '', 'user_id': 957739166}
+{'_id': ObjectId('63aab10cb004f7d13370e529'), 'name': 'Молодая семья 20-30 Северо-Запад', 'source_list': '', 'user_id': 957739166}
+{'_id': ObjectId('63aab10cb004f7d13370e52b'), 'name': 'Молодежь Дальний Восток', 'source_list': '', 'user_id': 957739166}

@@ -1,10 +1,10 @@
 from pymongo.mongo_client import MongoClient
-from analysisbot.logging.logger import _logger
+# from analysisbot.logging.logger import _logger
 
 
 if __name__ == '__main__':
     client = MongoClient('localhost', 27017)
-    print("Avalible collections: 1) dictionary 2) processed_data 3) users")
+    print("Avalible collections: 1) dictionary 2) processed_data 3) users 4) filters 5) segments")
     collection = input()
     db = client['trends_analysis']
     dic = db[collection].find({})
@@ -15,4 +15,4 @@ if __name__ == '__main__':
     c = db[collection].count_documents({})
     client.close()
 
-    _logger.warning(f'table [{collection}] {c} docs saves to db_{collection}.txt')
+    print(f'table [{collection}] {c} docs saves to db_{collection}.txt')

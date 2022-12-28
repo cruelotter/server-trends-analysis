@@ -262,9 +262,13 @@ class TrendDetection:
         for i,doc in docs.iterrows():
             if not doc['ref'] in p_unique:
                 path = doc['path']
-                r, d, t = TrendDetection.read_pkl(path+"raw.pkl", doc['ref'])
-                res.append({'path':path,'ref':r, 'date':d, 'text':t})
-                p_unique.add(doc['ref'])
+                try:
+                    r, d, t = TrendDetection.read_pkl(path+"raw.pkl", doc['ref'])
+                    res.append({'path':path,'ref':r, 'date':d, 'text':t})
+                    p_unique.add(doc['ref'])
+                except Exception as e:
+                    print(e)
+                
         del docs
         return res
 
@@ -361,7 +365,7 @@ class TrendDetection:
         TrendDetection.mean_score_ratio(df, 1)
         
         df.sort_values(by='growth', ascending=False, inplace=True)
-        df['word'].to_csv(f'{seg_type}_dict.csv')
+        df.to_csv(f'{seg_type}_dict.csv')
         df = df.iloc[:number]
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
         df = df[['word', 'previous', 'current', 'growth']]

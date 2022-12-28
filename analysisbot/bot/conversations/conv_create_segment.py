@@ -58,9 +58,9 @@ async def set_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def set_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
     input = update.message.text
     input = input.split()
-    SegmentManager.set_sources_custom(update.effective_chat.id, context.user_data['name'], input)
+    segment_id = SegmentManager.set_sources_custom(update.effective_chat.id, context.user_data['name'], input)
     # usr = UserManager.get_from_db(update.effective_chat.id)
-    UserManager.set_sources(update.effective_chat.id, input)
+    UserManager.set_sources(update.effective_chat.id, segment_id, input)
     # SegmentManager.set_sources_custom
     await update.message.reply_text(
         "Список источников изменен",

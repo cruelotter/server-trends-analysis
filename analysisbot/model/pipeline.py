@@ -75,18 +75,24 @@ class Pipeline:
                         'processed_data',
                         {"type": src_type, "source": source, "year": start.year, "month": start.month}
                         )
+                    # _logger.error(cur)
                     try:
                         if cur is None:
                             parse_queue[src_type][source].append(start)
+                            _logger.error(f"{start} | {cur}")
                             # MongoManager.insert_data(
                             # 'processed_data',
                             # {"type": src_type, "source": source, "year": start.year, "month": start.month, "full": datetime.now().isoformat()}
                         # )
-                        elif cur["full"] >= datetime.combine(datetime.now().date(), time(0,0)):
+                        elif datetime.combine(start, time(0,0)) >= cur["full"] or cur["full"] < datetime.combine(datetime.now().date(), time(0,0)):
                             parse_queue[src_type][source].append(start)
-                    except:
-                        if datetime.fromisoformat(cur["full"]) >= datetime.combine(datetime.now().date(), time(0,0)):
+                            _logger.error(f"{cur['full']} | {datetime.combine(datetime.now().date(), time(0,0))}")
+
+                    except Exception as e:
+                        if datetime.combine(start, time(0,0)) >= datetime.fromisoformat(cur["full"]) or datetime.fromisoformat(cur["full"]) < datetime.combine(datetime.now().date(), time(0,0)):
                             parse_queue[src_type][source].append(start)
+                            _logger.error(f"{cur['full']} | {datetime.combine(datetime.now().date(), time(0,0))}")
+
                         # parse_queue[src_type].append((path,[source, start, start + relativedelta(months=1)]))
 
                     start += relativedelta(months=1)
@@ -99,21 +105,21 @@ class Pipeline:
         for type in parse_queue.keys():
             parser = ParserFactory.create_parser(type)
             for source in parse_queue[type].keys():
-                try:
-                    print(source)
+                # try:
+                print(source)
+                print(parse_queue[type][source])
+                # os.makedirs(path[:-3], exist_ok=True)
+                if parse_queue[type][source] == []:
+                    _logger.warning('Nothing to parse')
+                else:
                     print(parse_queue[type][source])
-                    # os.makedirs(path[:-3], exist_ok=True)
-                    if parse_queue[type][source] == []:
-                        _logger.warning('Nothing to parse')
-                    else:
-                        print(parse_queue[type][source])
-                        seg_type = self.seg_type
-                        success = parser.get_source_data(source, parse_queue[type][source], seg_type)
-                        _logger.info(success)
+                    seg_type = self.seg_type
+                    success = parser.get_source_data(source, parse_queue[type][source], seg_type)
+                    _logger.info(success)
                     
-                except Exception as e:
-                    _logger.error(f'skipped {source}')
-                    _logger.error(e)
+                # except Exception as e:
+                #     _logger.error(f'skipped {source}')
+                #     _logger.error(e)
 
     '''    
     def read_pkl(self, path, ref):
@@ -228,7 +234,14 @@ class Pipeline:
             if len(use)>3: use = use[:2]
             html_examples=""
             for use_post in use:
-                html_examples += f"<h3>{use_post['path'][15:-8]}</h3><p>{use_post['date'][:-13]}</p><p>{use_post['text']}</p>"
+                if use_post is None:
+                    _logger.error("empty use_post")
+                else:
+                    try:
+                        _logger.info(use_post.keys())
+                        html_examples += f"<h3>{use_post['path'][15:-8]}</h3><p>{use_post['date'][:-13]}</p><p>{use_post['text']}</p>"
+                    except:
+                        _logger.error("keyerror 'path'")
                 
             path = pathlib.Path(f"/home/server-trends-analysis/storage/img/img_{row[0]}.png").as_uri()
             body += page_str.format(row[1], path, html_examples)
@@ -289,7 +302,7 @@ class Pipeline:
 
         # UserManager.set_status(self.user_id, 2)
         # renamed, tok_columns = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15)
-        top = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15)
+        top = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15, self.seg_type)
         pdf = self.create_html(top)
         # UserManager.set_status(self.user_id, 0)
         

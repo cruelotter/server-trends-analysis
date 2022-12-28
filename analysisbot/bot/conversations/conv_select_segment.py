@@ -42,9 +42,9 @@ async def select_segment(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return TOPIC
         
     
-async def set_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def select_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "Бизнес":
-        UserManager.set_sources(update.effective_chat.id, BUSINESS)
+        UserManager.set_sources(update.effective_chat.id, 2, BUSINESS)
         await update.message.reply_text(
             "Подобраны источники для данного сегмента",
             reply_markup=ReplyKeyboardMarkup(
@@ -80,7 +80,7 @@ conversation_choice_segments = ConversationHandler(
                       MessageHandler(filters.Regex('Выбрать сегмент'), select_segment, block=False)],
         states={
             TOPIC: [
-                MessageHandler(filters.TEXT, set_topic, block=False),
+                MessageHandler(filters.TEXT, select_topic, block=False),
                 # CommandHandler("cancel", cancel, block=False),
             ],
             # TYPE: [

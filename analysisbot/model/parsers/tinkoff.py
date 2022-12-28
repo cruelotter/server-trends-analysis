@@ -68,71 +68,67 @@ class ParserTinkoff(Parser):
     def get_posts(self, page: BeautifulSoup, queue, chat_name, posts, current_month, segment_id):
         # news = page.find_all('a', class_="link--sKzdE")
         cards = page.find_all('div', class_=re.compile("^card--\S+"))
-        headers = [c.find('div', class_=re.compile("^header--\S+")) for c in cards]
+        headers = [card.find('div', class_=re.compile("^header--\S+")) for card in cards]
         # headers = cards.find_all('div', class_=re.compile("^header--\S+"))
         news =[h.find('a', class_=re.compile("^link--\S+")) for h in headers]
 
         # posts = []
         for link in news:
-            try:
+            # try:
                 url = link.get('href')
                 _logger.info(f'https://journal.tinkoff.ru{url}')
             
                 r = requests.get(f'https://journal.tinkoff.ru{url}')
-                try:
-                    post = BeautifulSoup(r.text, 'html.parser')
+                # try:
+                post = BeautifulSoup(r.text, 'html.parser')
 
-                    header = post.find('div', class_='article-header__meta')
-                    header_meta = header.find('div', attrs={'data-component-name':'articleHeaderMeta'}).get('data-component-data')
-                    meta = json.loads(header_meta)
-                    meta_date = meta['date']
-                    msg_date = datetime.strptime(meta_date[:10], '%Y-%m-%d').date()
-                    c = msg_date.replace(day=1)
-                    if current_month != c:
-                        # print('cur', current_month)
-                        print(msg_date)
-                        self.save_and_clear(posts, chat_name, current_month, segment_id)
-                        current_month = msg_date.replace(day=1)
+                header = post.find('div', class_='article-header__meta')
+                header_meta = header.find('div', attrs={'data-component-name':'articleHeaderMeta'}).get('data-component-data')
+                meta = json.loads(header_meta)
+                meta_date = meta['date']
+                msg_date = datetime.strptime(meta_date[:10], '%Y-%m-%d').date()
+                c = msg_date.replace(day=1)
+                if current_month != c:
+                    # print('cur', current_month)
+                    print(msg_date)
+                    self.save_and_clear(posts, chat_name, current_month, segment_id)
+                    current_month = msg_date.replace(day=1)
 
-                    if current_month in queue:
-                        stats = meta['stats']
+                if current_month in queue:
+                    stats = meta['stats']
+                    text = []
+                    content = post.find('div', class_="article-body")
+                    paragraphs = content.find_all('p', {'class':'paragraph'})
+                    if len(paragraphs) > 0:
                         text = []
-                        content = post.find('div', class_="article-body")
-                        paragraphs = content.find_all('p', {'class':'paragraph'})
-                        if len(paragraphs) > 0:
-                            text = []
-                            headings = content.find_all('h2', class_='heading')
-                            for h in headings:
-                                text.append(h.get_text())
-                            for p in paragraphs:
-                                t: str = p.get_text()
-                                text.append(t.replace("\xa0", " "))
+                        headings = content.find_all('h2', class_='heading')
+                        for h in headings:
+                            text.append(h.get_text())
+                        for p in paragraphs:
+                            t: str = p.get_text()
+                            text.append(t.replace("\xa0", " "))
 
-                            # comments = self.get_comments(url)
-                            
-                            post = {
-                                'ref': f'https://journal.tinkoff.ru{url}',
-                                'text': " ".join(text),
-                                'date': msg_date,
-                                'views': stats['views'],
-                                'reactions': stats['comments']+stats['favoritesCount'],
-                                # 'comments':comments
-                            }
-                            posts.append(post)
-                    elif msg_date < queue[0]:
-                        print(msg_date, queue[0])
-                        self.save_and_clear(posts, chat_name, current_month, segment_id)
-                        return True, posts
-                    else: continue
-                except:
-                    _logger.error(f'Fail to parse page: https://journal.tinkoff.ru{url}')
-                    # with open() as f:
-                    #     pickle.dump(post, f)  
-            except:
-                    _logger.error('Could not get url')
-        # if posts!=[]:
-            # print(current_month)
-            # self.save_and_clear(posts, chat_name, current_month)
+                        # comments = self.get_comments(url)
+                        
+                        post = {
+                            'ref': f'https://journal.tinkoff.ru{url}',
+                            'text': " ".join(text),
+                            'date': msg_date,
+                            'views': stats['views'],
+                            'reactions': stats['comments']+stats['favoritesCount'],
+                            # 'comments':comments
+                        }
+                        posts.append(post)
+                elif msg_date < queue[0]:
+                    print(msg_date)
+                    self.save_and_clear(posts, chat_name, current_month, segment_id)
+                    return True, posts
+                else: continue
+                # except Exception as e:
+                #     _logger.error(f'Fail to parse page: https://journal.tinkoff.ru{url} \n{e}')
+            # except Exception as e:
+            #         _logger.error(f'Could not get url \n{e}')
+
         return False, posts
 
 
@@ -149,9 +145,9 @@ class ParserTinkoff(Parser):
             out_date, posts = self.get_posts(page, queue, channel, data, current_month, segment_id)
             data.extend(posts)
             # del posts
-            print(out_date)
+            # print(out_date)
             if not out_date:
-                print("not outdated")
+                print("not overdated")
                 # nav = page.find('div', class_='paginator--dEqKc')
                 nav = page.find('div', class_=re.compile("^paginator--\S+"))
                 # print(nav)
