@@ -136,6 +136,6 @@ class Preprocessing:
                     _logger.warning(f"{i} texts")
             del new_df
             
-        _logger.warning(f"{path} | {len(data.index)} tokens preprocessing done")
+        _logger.info(f"{path} | {len(data.index)} tokens preprocessing done")
         data = data.fillna(0)
         return data
