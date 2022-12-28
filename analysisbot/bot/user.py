@@ -62,36 +62,39 @@ class Filters:
     @staticmethod
     def set_topic(id, topic):
         Filters.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'filters',
             {'_id': id},
             {'topic': topic})
+        _logger.info(update)
     
     @staticmethod
     def set_age(id, age):
         Filters.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'filters',
             {'_id': id},
             {'age': age})
-        _logger.info('Age filter updated')
+        _logger.info(update)
     
        
     @staticmethod
     def set_gender(id, gender):
         Filters.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'filters',
             {'_id': id},
             {'gender': gender})
+        _logger.info(update)
         
     @staticmethod
     def set_geo(id, geo):
         Filters.check_exists(id)
-        MongoManager.update_data(
+        update = MongoManager.update_data(
             'filters',
             {'_id': id},
             {'geo': geo})
+        _logger.info(update)
         
     @staticmethod
     def get_filters(id):
@@ -104,7 +107,7 @@ class User:
                  schedule_time=DEFAULT_SCHEDULE_TIME.isoformat(),
                  status=0) -> None:
         self.id: int = id
-        self.segment_id = segment_id #!#########################################################
+        self.segment_id = segment_id
         self.status: int = status
         self.history_duration: int = history
         self.trend_period: int = trend
@@ -125,7 +128,7 @@ class User:
     def to_dict(self) -> dict:
         return {
             '_id': self.id,
-            'segment_id': self.segment_id,   #!###########################################
+            'segment_id': self.segment_id,
             'sources': self.sources,
             'history_duration': self.history_duration,
             'trend_period': self.trend_period,
@@ -155,9 +158,7 @@ class UserManager:
             _logger.info(found if found is not None else f"User not found. Creating new...{json.dumps(user.to_dict(), indent=2)}")
         else:
             user = User(*found.values())
-            print(found)
             _logger.info(f"User...{json.dumps(user.to_dict(), indent=2)}")
-        _logger.warning(user.to_dict())
         return user
     
     @staticmethod
