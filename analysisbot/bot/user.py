@@ -155,7 +155,7 @@ class UserManager:
                 'users',
                 user.to_dict()
             )
-            _logger.info(found if found is not None else f"User not found. Creating new...{json.dumps(user.to_dict(), indent=2)}")
+            _logger.info(f"User not found. Creating new...{json.dumps(user.to_dict(), indent=2)}")
         else:
             user = User(*found.values())
             _logger.info(f"User...{json.dumps(user.to_dict(), indent=2)}")
@@ -169,11 +169,13 @@ class UserManager:
         )
         if found is None:
             user = User(id)
+            print(user)
+            print(user.to_dict())
             MongoManager.insert_data(
                 'users',
                 user.to_dict()
             )
-            _logger.info(found if found is not None else f"User not found. Creating new...{json.dumps(user.to_dict(), indent=2)}")
+        _logger.info(found if found is not None else f"User not found. Creating new...{json.dumps(user.to_dict(), indent=2)}")
         
     
     @staticmethod
