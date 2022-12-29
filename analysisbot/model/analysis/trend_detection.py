@@ -10,6 +10,7 @@ from pymcdm import methods as mcdm_methods
 from pymcdm import weights as mcdm_weights
 from sklearn import linear_model
 
+
 from analysisbot.logging.logger import _logger
 from analysisbot.database.mongodb import MongoManager
 
@@ -188,6 +189,7 @@ class TrendDetection:
     @staticmethod
     def mean_differance(sources: dict, current_date, period:int, remerge=True, mcdm=False) -> pd.DataFrame:
         sum_means = TrendDetection.chunking(sources, current_date, period, remerge, mcdm)
+        # print('sum_chunks 12310', sum_means['12310'])
         sum_means = sum_means.mean(axis=0).to_frame(name='previous')
         _logger.info('sum_means done')
 
@@ -272,7 +274,7 @@ class TrendDetection:
         del docs
         return res
 
-    #! ==========================================================================================================
+    
     @staticmethod
     def merge_one_token_data(source_dict: dict, token, month: datetime):
         merged_df = None
@@ -293,7 +295,9 @@ class TrendDetection:
         try:
             # print(len(merged_df.index))
             merged_df = merged_df.groupby(['token']).agg({'frequency':'sum', 'views':'mean', 'reactions':'mean'})
-            # print(merged_df.head(5).to_string())
+            # print(merged_df)
+            # print(month, token)
+            # print("===================================\n")
             merged_df['date'] = month
         except Exception as e:
             _logger.debug(e)
@@ -303,7 +307,8 @@ class TrendDetection:
     @staticmethod
     def chunking_one(sources, token, end_date:datetime, history:int, remerge:bool=True, mcdm:bool=False):
         sum_by_month = None
-        for end in pd.date_range(end=end_date, freq='M', periods=history):
+        for end in pd.date_range(end=end_date, freq='M', periods=history+1):
+            # print("enddate: ", end)
             path = f'./storage/chunks/{end.year}/{str.zfill(str(end.month),2)}chunk.csv'
             if remerge:
                 window_df = TrendDetection.merge_one_token_data(sources, token, end)
@@ -322,29 +327,46 @@ class TrendDetection:
                 else:
                     sum_by_month = pd.concat([sum_by_month, window_df])
 
-        if sum_by_month is not None:
+        if sum_by_month is not None: 
             sum_by_month.fillna(0, inplace=True)
             sum_by_month.reset_index(inplace=True)
             if mcdm:
                 return TrendDetection.mcdm_score(sum_by_month)
             else:
                 sum_by_month.drop(['views', 'reactions'], axis=1, inplace=True)
+                # print(sum_by_month)
                 return TrendDetection.rearrange_freq_only(sum_by_month)
         else:
             return None
         
         
-    def one_token_graph(sources, current_date, period, token):
-        token_stats = TrendDetection.chunking_one(sources, token, current_date+timedelta(days=30), period)
+    def one_token_graph(sources, current_date: datetime, period, token):
+        current_date = ((current_date + timedelta(weeks=4)).replace(day=1) - timedelta(days=1)).date()
+        date_range = pd.date_range(end=current_date, periods=period+1, freq='M').to_frame(name='date')
+        
+        # token_stats = TrendDetection.chunking_one(sources, token[0], current_date+timedelta(days=30), period)
+        token_stats = TrendDetection.chunking_one(sources, token[0], current_date, period)
+
+        token_stats.index = token_stats.index.to_pydatetime()
+        # print(token_stats)
+        join = date_range.join(token_stats, how='left')
+        # join: pd.DataFrame = pd.concat([token_stats, date_range], join='outer')
+        join.drop('date', axis=1, inplace=True)
+        join.fillna(0.0, inplace=True)
+        join.rename(columns={token[0]:token[1]}, inplace=True)
+        join.sort_index(inplace=True)
+        # print(join)
+
         plt.figure(clear=True, figsize=(15,8))
+        
         sns.set_theme(style="darkgrid")
         sns.lineplot(token_stats)
         plt.xticks(rotation=15)
-        plt.savefig(f'storage/img/img_{token}.png')
-        _logger.warning(f"img_{token} saved")
+        plt.savefig(f'storage/img/img_{token[0]}.png')
+        _logger.warning(f"img_{token[0]} saved")
         plt.close()
         
-        return token_stats
+        return join
     
     def top_token_stats(stats):
         plt.figure(clear=True, figsize=(15,8))
@@ -354,7 +376,6 @@ class TrendDetection:
         plt.savefig('storage/img/all.png')
         plt.close()
     
-    #! ==========================================================================================================
     
     
     @staticmethod
@@ -371,29 +392,33 @@ class TrendDetection:
         df = df[['word', 'previous', 'current', 'growth']]
         all_stats: pd.DataFrame = None
         os.makedirs('storage/img', exist_ok=True)
-        for tok in df.index.to_numpy():
-            # print(tok)
-            u = TrendDetection.usage(tok, set(), start_date)
-            with open(f'storage/usage/usage_{tok}.json', 'w', encoding='utf-8') as file:
-                pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
-            
+        print(df['word'])
+        for tok in df.itertuples():
+            print(tok[0], tok[1])
+            # u = TrendDetection.usage(tok, set(), start_date)
+            # with open(f'storage/usage/usage_{tok}.json', 'w', encoding='utf-8') as file:
+            #     pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
             
             one_stat = TrendDetection.one_token_graph(source_dict, start_date, period, tok)
-            print(tok, "img")
-            print(one_stat)
             if all_stats is None:
                 all_stats = one_stat
             else:
-                all_stats = pd.concat([all_stats, one_stat])
                 print(one_stat)
+                all_stats = all_stats.join(one_stat, how='inner')
+                # all_stats = pd.concat([all_stats, one_stat], axis=1)
             
             
-        print(all_stats.info())
+        print(all_stats.to_string())
         TrendDetection.top_token_stats(all_stats)
             
         print(df.round(2))
-        print(df.info())
         return df.round(2)
     
     
-   
+if __name__=="__main__":
+    
+    sources = {'telegram': ['Reddit', 'coinkeeper', 'vcnews'],}
+    history_duration=6
+    process_queue = []
+    trend_window=30
+    top = TrendDetection.get_top_data(sources, process_queue, history_duration, trend_window, 6, '1')
