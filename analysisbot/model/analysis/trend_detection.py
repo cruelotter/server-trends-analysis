@@ -254,7 +254,7 @@ class TrendDetection:
             print(token, end=' __ ')
             print(e)
             return [{'path': "_",'ref': "_", 'date':"_", 'text':"_"}]
-        df = df.loc[(df['token']==str(token)) & (df['year']==date.year), ['token', 'month', 'path', 'ref']]
+        df = df.loc[(df['token']==str(token[0])) & (df['year']==date.year), ['token', 'month', 'path', 'ref']]
         docs: pd.DataFrame = df.loc[(df['month']==date.month) | (df['month']==date.month-1), ['path', 'ref']]
         docs.reset_index(inplace=True)
         del df
@@ -376,6 +376,7 @@ class TrendDetection:
         plt.savefig('storage/img/all.png')
         plt.close()
     
+    
     @staticmethod
     def get_bigrams(token_list):
         bigrams_df = pd.read_csv('./storage/bigrams.csv')
@@ -383,6 +384,7 @@ class TrendDetection:
         print(bigrams_df.info())
         bigrams_df.drop(bigrams_df[~bigrams_df['token'].isin(token_list)].index, inplace=True)
         pair_list = bigrams_df['pair'].to_list()
+        print(pair_list)
         pair_dict = dict.fromkeys(token_list, [])
         for tok in pair_list:
             pairs = tok.split('/')
@@ -417,7 +419,7 @@ class TrendDetection:
             print(tok[0], tok[1])
             # examples of posts with word to json file
             u = TrendDetection.usage(tok, set(), start_date)
-            with open(f'storage/usage/usage_{tok}.json', 'w', encoding='utf-8') as file:
+            with open(f'storage/usage/usage_{tok[0]}.json', 'w', encoding='utf-8') as file:
                 pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
             
             # graph of word history

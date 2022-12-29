@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pathlib
+import json
 import os
 # from weasyprint import HTML, CSS
 # from fpdf import FPDF
@@ -145,7 +146,7 @@ class Pipeline:
         # p_unique = set()
         for row in top.itertuples():
             print(f'page: {row[0]} {row[1]}')()
-            import json
+            
             with open(f'storage/usage/usage_{row[0]}.json', 'r', encoding='utf-8') as file:
                 use = json.load(file)
             print("usage found:", len(use))
