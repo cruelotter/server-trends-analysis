@@ -145,7 +145,7 @@ class Pipeline:
         body = ""
         # p_unique = set()
         for row in top.itertuples():
-            print(f'page: {row[0]} {row[1]}')()
+            print(f'page: {row[0]} {row[1]}')
             
             with open(f'storage/usage/usage_{row[0]}.json', 'r', encoding='utf-8') as file:
                 use = json.load(file)
