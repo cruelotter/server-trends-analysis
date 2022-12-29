@@ -3,6 +3,7 @@
 
 ## 27.12.2022
 ## [@TrendAnalysisBot](https://t.me//TrendAnalysisBot)
+Для получения доступа, пожалуйста, напишите tg: [@Asonov](https://t.me//Asonov)
 
 ## Базовые настройки
 1. Можно выбрать, за какой период историю использовать для расчетов и за какой промежуток выделять тренды.
@@ -16,12 +17,12 @@
 3. Для общих трендов начнется диалог с выбором параметров целевой аудитории: пол, возраст, регион
 4. Нажмите "Расчитать тренды" для запуска программы. В ответ вы получите сообщение с топом трендов и подробный отчет. Время ожидания результата составляет от 7 минут(когда источники уже загружены) до нескольких часов(когда пользователь добавил новые источники)
 
-## Типы источников
-1. Телеграм-каналы
+## Типы источников / Примеры
+1. Телеграм-каналы  
    > [t.me/BizLike](https://t.me/BizLike)
-2. Группы ВК
-   > https://vk.com/nrnews24
-3. Потоки Тинькофф Журнал
-   > https://journal.tinkoff.ru/flows/business-opinion/
-4. Яндекс Дзен
-   >[https://dzen.ru/news/rubric/culture](https://dzen.ru/news/rubric/culture?issue_tld=ru)
+2. Группы ВК  
+   > [https://vk.com/nrnews24](https://vk.com/nrnews24)
+3. Потоки Тинькофф Журнал  
+   > [https://journal.tinkoff.ru/flows/business-opinion/](https://journal.tinkoff.ru/flows/business-opinion/)
+4. Яндекс Дзен  
+   > [https://dzen.ru/news/rubric/culture](https://dzen.ru/news/rubric/culture?issue_tld=ru)
