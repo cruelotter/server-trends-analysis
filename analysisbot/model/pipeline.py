@@ -157,7 +157,7 @@ class Pipeline:
                     _logger.error("empty use_post")
                 else:
                     try:
-                        _logger.info(use_post.keys())
+                        # _logger.info(use_post.keys())
                         html_examples += f"<h3>{use_post['path'][15:-8]}</h3><p>{use_post['date'][:-13]}</p><p>{use_post['text']}</p>"
                     except:
                         _logger.error("keyerror 'path'")
