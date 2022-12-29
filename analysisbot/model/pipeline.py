@@ -85,14 +85,14 @@ class Pipeline:
                             # 'processed_data',
                             # {"type": src_type, "source": source, "year": start.year, "month": start.month, "full": datetime.now().isoformat()}
                         # )
-                        elif datetime.combine(start, time(0,0)) >= cur["full"] or cur["full"] < datetime.combine(datetime.now().date(), time(0,0)):
+                        elif start.month>cur['full'].month or datetime.combine(start, time(0,0)) >= cur["full"] or cur["full"] < datetime.combine(datetime.now().date(), time(0,0)):
                             parse_queue[src_type][source].append(start)
-                            _logger.error(f"{cur['full']} | {datetime.combine(datetime.now().date(), time(0,0))}")
+                            _logger.info(f"{cur['full']} | {datetime.combine(datetime.now().date(), time(0,0))}")
 
                     except Exception as e:
                         if datetime.combine(start, time(0,0)) >= datetime.fromisoformat(cur["full"]) or datetime.fromisoformat(cur["full"]) < datetime.combine(datetime.now().date(), time(0,0)):
                             parse_queue[src_type][source].append(start)
-                            _logger.error(f"{cur['full']} | {datetime.combine(datetime.now().date(), time(0,0))}")
+                            _logger.info(f"{cur['full']} | {datetime.combine(datetime.now().date(), time(0,0))}")
 
                         # parse_queue[src_type].append((path,[source, start, start + relativedelta(months=1)]))
 
