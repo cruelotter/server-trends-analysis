@@ -384,6 +384,8 @@ class TrendDetection:
         print(bigrams_df.info())
         print(token_list)
         bigrams_df.drop(bigrams_df[~bigrams_df['token'].isin(token_list)].index, inplace=True)
+        print(bigrams_df)
+        print("================================")
         pair_list = bigrams_df['pair'].to_list()
         print(pair_list)
         pair_dict = dict.fromkeys(token_list, [])
