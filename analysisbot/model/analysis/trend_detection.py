@@ -379,7 +379,7 @@ class TrendDetection:
     @staticmethod
     def get_bigrams(token_list):
         bigrams_df = pd.read_csv('./storage/bigrams.csv')
-        bigrams_df.drop(bigrams_df[~bigrams_df['token'].isin(token_list).index], inplace=True)
+        bigrams_df.drop(bigrams_df[~bigrams_df['token'].isin(token_list)], inplace=True)
         pair_list = bigrams_df['pair'].to_list()
         pair_dict = dict.fromkeys(token_list, [])
         for tok in pair_list:
