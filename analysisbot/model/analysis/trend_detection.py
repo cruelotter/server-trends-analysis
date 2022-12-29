@@ -355,7 +355,7 @@ class TrendDetection:
         join.fillna(0.0, inplace=True)
         join.rename(columns={token[0]:token[1]}, inplace=True)
         join.sort_index(inplace=True)
-        # print(join)
+        print(join.index)
 
         plt.figure(clear=True, figsize=(15,8))
         
