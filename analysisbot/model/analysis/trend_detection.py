@@ -383,6 +383,7 @@ class TrendDetection:
         print(bigrams_df.head(10))
         print(bigrams_df.info())
         print(token_list)
+        token_list = [0, 1]
         bigrams_df.drop(bigrams_df[~bigrams_df['token'].isin(token_list)].index, inplace=True)
         print(bigrams_df)
         print("================================")
