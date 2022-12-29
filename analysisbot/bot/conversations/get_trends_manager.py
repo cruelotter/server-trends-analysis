@@ -46,7 +46,7 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     for i,word in enumerate(trends['word'].tolist(), start=1):
         string_trend_list += f"{i}. {word}\n"
     string_trend_list += f"\n{json.dumps(bigrams, indent=2)}"
-    await context.bot.send_document(chat_id, document=open(file+".html", 'rb'),
+    await context.bot.send_document(chat_id, document=open(file+".pdf", 'rb'),
                                     caption=string_trend_list,
                                     reply_markup=ReplyKeyboardMarkup(
                                         MAIN_KEYBOARD, resize_keyboard=True)

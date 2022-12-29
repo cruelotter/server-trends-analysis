@@ -17,6 +17,8 @@ from analysisbot.model.analysis.preprocessing import Preprocessing
 from analysisbot.model.analysis.trend_detection import TrendDetection
 
  
+import pdfkit
+ 
 class Pipeline:
     
     history_end: date
@@ -123,10 +125,10 @@ class Pipeline:
                 #     _logger.error(e)
         
     
-    def create_html(self, top: pd.DataFrame):
+    def create_html(self, top: pd.DataFrame, bigrams):
         html_head = '<!DOCTYPE html><html><head><title>Report</title><style>html * {font-family: Arial, Helvetica, sans-serif;margin-left: 50px;margin-right: 50px;max-width: 1500px;}</style></head>'
         html_body = 'html<body>{}{}{}</body></html>'
-        page_str = '<div><h2>{}</h2><img src="{}"/><h2>Примеры постов:</h2>{}</div>'
+        page_str = '<div><h2>{}</h2><p>{}</p><img src="{}"/><h2>Примеры постов:</h2>{}</div>'
         # page_str = '<div><h2>{}</h2><img src="{}"/></div>'
         # post_str = '<h3>{}</h3><p>{}</p>'
         
@@ -163,7 +165,7 @@ class Pipeline:
                         _logger.error("keyerror 'path'")
                 
             path = pathlib.Path(f"/home/server-trends-analysis/storage/img/img_{row[0]}.png").as_uri()
-            body += page_str.format(row[1], path, html_examples)
+            body += page_str.format(row[1],bigrams[int(row[0])], path, html_examples)
             print('ok')
         path = f"./storage/reports/report_{int(datetime.now().timestamp())}"
         
@@ -174,6 +176,8 @@ class Pipeline:
             f.write(s)
         # html = HTML(string=s, base_url="/trends_analysis")
         print('html created')
+        
+        pdfkit.from_file(f'{path}.html', f'{path}.pdf')
 
         return path
         
@@ -222,7 +226,7 @@ class Pipeline:
         # UserManager.set_status(self.user_id, 2)
         # renamed, tok_columns = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15)
         top, bigrams = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15, self.seg_type)
-        pdf = self.create_html(top)
+        pdf = self.create_html(top, bigrams)
         # UserManager.set_status(self.user_id, 0)
         
         return pdf, top, bigrams
