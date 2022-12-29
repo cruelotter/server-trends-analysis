@@ -397,7 +397,7 @@ class TrendDetection:
             for p in pairs:
                 tok = p.split('_')[0]
                 words = TrendDetection.token_to_word(p, as_dict=False)
-                pair_dict[tok].append(words)
+                pair_dict[int(tok)].append(words)
         print(pair_dict)
         return pair_dict
                 
