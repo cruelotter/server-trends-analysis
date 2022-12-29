@@ -360,7 +360,7 @@ class TrendDetection:
         plt.figure(clear=True, figsize=(15,8))
         
         sns.set_theme(style="darkgrid")
-        sns.lineplot(token_stats)
+        sns.lineplot(join)
         plt.xticks(rotation=15)
         plt.savefig(f'storage/img/img_{token[0]}.png')
         _logger.warning(f"img_{token[0]} saved")
@@ -368,7 +368,7 @@ class TrendDetection:
         
         return join
     
-    def top_token_stats(stats):
+    def all_token_graph(stats):
         plt.figure(clear=True, figsize=(15,8))
         sns.set_theme(style="darkgrid")
         sns.lineplot(stats, dashes=False)
@@ -376,6 +376,23 @@ class TrendDetection:
         plt.savefig('storage/img/all.png')
         plt.close()
     
+    @staticmethod
+    def get_bigrams(token_list):
+        bigrams_df = pd.read_csv('./storage/bigrams.csv')
+        bigrams_df.drop(~bigrams_df['token'].isin(token_list), inplace=True)
+        pair_list = bigrams_df['pair'].to_list()
+        pair_dict = dict.fromkeys(token_list, [])
+        for tok in pair_list:
+            pairs = tok.split('/')
+            print(pairs)
+            # words = []
+            for p in pairs:
+                tok = p.split('_')[0]
+                words = TrendDetection.token_to_word(p, as_dict=False)
+                pair_dict[tok].append(words)
+        print(pair_dict)
+        return pair_dict
+                
     
     
     @staticmethod
@@ -390,15 +407,18 @@ class TrendDetection:
         df = df.iloc[:number]
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
         df = df[['word', 'previous', 'current', 'growth']]
+        
         all_stats: pd.DataFrame = None
         os.makedirs('storage/img', exist_ok=True)
         print(df['word'])
         for tok in df.itertuples():
             print(tok[0], tok[1])
-            # u = TrendDetection.usage(tok, set(), start_date)
-            # with open(f'storage/usage/usage_{tok}.json', 'w', encoding='utf-8') as file:
-            #     pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
+            # examples of posts with word to json file
+            u = TrendDetection.usage(tok, set(), start_date)
+            with open(f'storage/usage/usage_{tok}.json', 'w', encoding='utf-8') as file:
+                pd.DataFrame(u).to_json(file, orient='records', date_format='iso', indent=4, force_ascii=False)
             
+            # graph of word history
             one_stat = TrendDetection.one_token_graph(source_dict, start_date, period, tok)
             if all_stats is None:
                 all_stats = one_stat
@@ -409,10 +429,13 @@ class TrendDetection:
             
             
         print(all_stats.to_string())
-        TrendDetection.top_token_stats(all_stats)
+        TrendDetection.all_token_graph(all_stats)
             
         print(df.round(2))
-        return df.round(2)
+        
+        pair_dict = TrendDetection.get_bigrams(list(df.index))
+        
+        return df.round(2), pair_dict
     
     
 if __name__=="__main__":

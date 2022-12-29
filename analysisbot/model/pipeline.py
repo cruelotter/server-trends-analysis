@@ -120,79 +120,6 @@ class Pipeline:
                 # except Exception as e:
                 #     _logger.error(f'skipped {source}')
                 #     _logger.error(e)
-
-    '''    
-    def read_pkl(self, path, ref):
-        l_raw = pd.read_pickle(path+'raw.pkl')
-        # print(l_raw)
-        raw = pd.DataFrame(l_raw)
-        # print(raw.head(3).to_string())
-        if l_raw == []:
-            _logger.warning('Empty source file')
-            return []
-        else:
-            found = raw.loc[raw['ref']==ref]
-            return found['text'].to_numpy()
-    
-    def usage2(self, token, p_unique):
-        # MongoManager.insert_data('token_ref', {'token': res, 'year': date.year, 'month': date.month, 'path': path, 'ref': ref})
-        date = datetime.today()
-        contains = set()
-        ref_tok = [set(), set()]
-        for idx, word in enumerate(token.split('_')):
-            doc: list = MongoManager.find_data('token_ref', {'token': int(word), 'year': date.year, 'month': date.month}, multiple=True)
-            # print(doc)
-            for d in doc:
-                try:
-                    contains.add((d['ref'], d['path']))
-                    ref_tok[idx].add(d['ref'])
-                except Exception as e:
-                    _logger.error("Could not add ref doc")
-                    print(e)
-            
-        ref_set = ref_tok[0].intersection(ref_tok[1], ref_tok[2], ref_tok[3])
-        del ref_tok
-        # print(f"ref_set {len(ref_set)}")
-        
-        res = []
-        i = 0
-        for ref, path in contains:
-            if (ref in ref_set) and (path[10:-8] not in p_unique) and i<4:
-                text = self.read_pkl(path, ref)
-                res.append([path[10:-8], text])
-        del ref_set
-        del contains           
-        
-        return res
-    
-    
-    def usage(self, token, p_unique:set):
-        date = datetime.today()
-        try:
-            df = pd.read_csv(f'./storage/ref.csv', dtype={'token':object, 'year':int, 'month':int, 'path':object, 'ref':object})
-        except Exception as e:
-            print(token, end=' __ ')
-            print(e)
-            return [["Not found", 'not found']]
-        df = df[df['token']==token]
-        docs: pd.DataFrame = df.loc[(df['year']==date.year) & (df['month']==date.month), ['path', 'ref']]
-        docs.reset_index(inplace=True)
-        del df
-        # docs: list = MongoManager.find_random('token_ref', {'token': token, 'year': date.year, 'month': date.month})
-        print(len(docs))
-        if len(docs)==0:
-            return [["Not found", 'not found']]
-        res = []
-        for i,doc in docs.iterrows():
-            if i>3: return res
-            if not doc['ref'] in p_unique:
-                path = doc['path']
-                text = self.read_pkl(path, doc['ref'])
-                res.append([path[10:-8], text])
-        del docs
-        return res
-'''               
-                
         
     
     def create_html(self, top: pd.DataFrame):
@@ -211,22 +138,13 @@ class Pipeline:
         path = pathlib.Path("/home/server-trends-analysis/storage/img/all.png").as_uri()
         header = '<div><h1>Отчет</h1><p>История c {} по {}</p><p>Выделять тренд за {} дня(ей)</p><p>Источники:</p><ul>{}</ul><img src="{}"/></div>'.format(self.history_start, self.history_end, self.trend_window, li_sources, path)
         
-        preview_list = "".join([f'<li>{s}</li>' for s in top['word'].tolist()]) #!###############################################
+        preview_list = "".join([f'<li>{s}</li>' for s in top['word'].tolist()]) 
         preview = '<div><p>Выявленные тренды:</p><ol>{}</ol></div>'.format(preview_list)
-        
-        # top_np = top.to_numpy()
-        # print(top_np)
+
         body = ""
         # p_unique = set()
         for row in top.itertuples():
-            print(f'page: {row[0]} {row[1]}')
-            # use = self.usage(old[i], p_unique)
-            # example_posts = ""
-            # for post in use:
-            #     p_unique.add(post[0])
-            #     example_posts += post_str.format(post[0], post[1])
-                
-            # path = pathlib.Path(f"/home/cruelotter/sber/trends_analysis/storage/img/history_{old[i]}.png").as_uri()
+            print(f'page: {row[0]} {row[1]}')()
             import json
             with open(f'storage/usage/usage_{row[0]}.json', 'r', encoding='utf-8') as file:
                 use = json.load(file)
@@ -302,11 +220,11 @@ class Pipeline:
 
         # UserManager.set_status(self.user_id, 2)
         # renamed, tok_columns = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15)
-        top = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15, self.seg_type)
+        top, bigrams = TrendDetection.get_top_data(self.source_list, process_queue, self.history_duration, self.trend_window, 15, self.seg_type)
         pdf = self.create_html(top)
         # UserManager.set_status(self.user_id, 0)
         
-        return pdf, top
+        return pdf, top, bigrams
     
 if __name__=="__main__":
     

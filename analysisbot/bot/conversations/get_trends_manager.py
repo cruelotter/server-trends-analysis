@@ -1,3 +1,4 @@
+import json
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import (
     CommandHandler,
@@ -36,7 +37,7 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     usr = UserManager.get_from_db(chat_id)
     _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources, usr.segment_id])
     pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources, usr.segment_id)
-    file, trends = pipeline.run()
+    file, trends, bigrams = pipeline.run()
     #!------
     # file, trends = threading.Thread(target=get_trends).start()
     #!------
@@ -44,6 +45,7 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     string_trend_list = ""
     for i,word in enumerate(trends['word'].tolist(), start=1):
         string_trend_list += f"{i}. {word}\n"
+    string_trend_list += f"\n{json.dumps(bigrams, indent=2)}"
     await context.bot.send_document(chat_id, document=open(file+".html", 'rb'),
                                     caption=string_trend_list,
                                     reply_markup=ReplyKeyboardMarkup(

@@ -1,8 +1,11 @@
+import os
 import re
 import pandas as pd
 from datetime import date, datetime, time
 from collections import Counter
 import spacy
+
+import nltk
 
 from analysisbot.logging.logger import _logger
 from analysisbot.database.mongodb import MongoManager
@@ -85,12 +88,12 @@ class Preprocessing:
                     filtered_list.append(str(lemma_id))
         del doc
         counter = Counter(filtered_list)
-        # bigrams = list(nltk.ngrams(filtered_list, 2))
-        # bigram_pairs = [("_".join([str(a[0]), str(a[1])]), counter[a[0]]+counter[a[1]]) for idx, a in enumerate(bigrams)]
+        bigrams = list(nltk.ngrams(filtered_list, 2))
+        bigram_pairs = [[str(a[0]), "_".join([str(a[0]), str(a[1])]), counter[a[0]]+counter[a[1]]] for idx, a in enumerate(bigrams)]
         # bigram_pairs = [("_".join([str(a[0]), str(a[1]), str(b[0]), str(b[1])]), counter[a[0]]+counter[a[1]]+counter[b[0]]+counter[b[1]]) for idx, a in enumerate(bigrams) for b in bigrams[idx+2:]]
-        # del bigrams
-        # return dict(bigram_pairs)
-        return counter
+        del bigrams
+        # return bigram_pairs
+        return counter, bigram_pairs
     
 
     def raw_to_stats(self, raw_data, path, segment_id):
@@ -110,12 +113,26 @@ class Preprocessing:
             pd.DataFrame: предобработанные данные
         """        
         _logger.info(f"| {len(raw_data)} posts parsed")
+        
         cols=['token', 'date', 'frequency', 'views', 'reactions']
         data = pd.DataFrame(columns=cols)
+        
+        if os.path.exists('./storage/bigrams.csv'):
+            bigram_df = pd.read_csv('./storage/bigrams.csv')
+        else:
+            bigram_df = None
+        
         for i, df in enumerate(raw_data):
             # df = raw_data[i]
             date = datetime.combine(df['date'], time(0,0))
-            freq_dict = self.lemmatizer(df['text'], segment_id)
+            freq_dict, bigrams = self.lemmatizer(df['text'], segment_id)
+            
+            if bigram_df is None:
+                bigram_df = pd.DataFrame(bigrams, columns=['token', 'pair', 'frequency'])
+            else:
+                bigram_df = pd.concat([bigram_df, pd.DataFrame(bigrams, columns=['token', 'pair', 'frequency'])], ignore_index=True)
+            del bigrams
+            
             list_df = []
             for token in freq_dict:
                 pd.DataFrame({'token': token, 'year': date.year, 'month': date.month, 'path': path, 'ref': str(df['ref'])}, [token]).to_csv(f'./storage/ref.csv', mode='a', index=False, header=False)
@@ -133,9 +150,12 @@ class Preprocessing:
                 data = pd.concat([data, new_df], ignore_index=True).groupby(['token', 'date']).sum(['frequency', 'views', 'reactions'])
                 data.reset_index(inplace=True)
                 if i % 100 == 0:
-                    _logger.warning(f"{i} texts")
+                    _logger.warning(f"{i} posts")
             del new_df
             
+           
+        bigram = bigram_df.groupby('token').agg({'pair':lambda x: "/".join(x), 'frequency': 'sum'})
+        bigram.to_csv('./storage/bigrams.csv')
         _logger.info(f"{path} | {len(data.index)} tokens preprocessing done")
         data = data.fillna(0)
         return data

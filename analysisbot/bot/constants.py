@@ -54,7 +54,7 @@ TXT_HISTORY = '''Выберите, за какой период использо
 Нажмите /default для выбора значения по умолчанию.
 Нажмите /cancel для отмены действия.'''
 
-DEFAULT_HISTORY: int = 12
+DEFAULT_HISTORY: int = 4
 OPTIONS_HISTORY = [['6 месяцев', '1 год'],
                    ['2 года', '3 года'],
                    ['/default', '/cancel']]
