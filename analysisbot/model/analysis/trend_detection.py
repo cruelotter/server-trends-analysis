@@ -394,9 +394,10 @@ class TrendDetection:
             pairs = row[2].split('/')
             # print(pairs)
             # words = []
-            tok = row[0]
+            tok = row[1]
             print(tok)
             if len(pairs) > 4: pairs = pairs[:3]
+            print(pairs)
             for p in pairs:
                 # tok = p.split('_')[0]
                 words = TrendDetection.token_to_word(p, as_dict=False)
