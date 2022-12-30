@@ -6,12 +6,12 @@ if __name__ == '__main__':
     db = client['trends_analysis']
     
     #! drop all
-    client.drop_database('trends_analysis')
+    # client.drop_database('trends_analysis')
     
     
     #! drop collection
     # client.trends_analysis.drop_collection('processed_data')
-    # client.trends_analysis.processed_data.delete_many({"type": "tinkoff_journal"})
+    client.trends_analysis.processed_data.delete_many({"type": "vk"})
     # client.trends_analysis.drop_collection('users')
         
     #! show entire database['dictionary'] in file dict.txt

@@ -90,8 +90,9 @@ class ParserTinkoff(Parser):
                 c = msg_date.replace(day=1)
                 if current_month != c:
                     # print('cur', current_month)
-                    print(msg_date)
-                    self.save_and_clear(posts, chat_name, current_month, segment_id)
+                    if c < current_month:
+                        print(msg_date)
+                        self.save_and_clear(posts, chat_name, current_month, segment_id)
                     current_month = msg_date.replace(day=1)
 
                 if current_month in queue:

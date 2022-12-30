@@ -3,6 +3,7 @@ from analysisbot.database.mongodb import MongoManager
 
 
 def token_to_word(ids, as_dict=True):
+    
         '''Метод для преобразования токена(id слова) в само слово в виде строки'''
         word = ""
         doc = MongoManager.find_data('dictionary', {'_id': int(ids)})
@@ -14,18 +15,18 @@ def token_to_word(ids, as_dict=True):
         if as_dict: return {ids: word}
         else: return word
         
-
-seg1 = pd.read_csv('63adb395698e7c769dd29231_dict.csv', index_col=0)
+mongodb = MongoManager.get_instance()
+seg1 = pd.read_csv('1_dict.csv', index_col=0)
 print(len(seg1))
 segm1 = set(seg1.index)
 del seg1
 
-seg2 = pd.read_csv('63adb395698e7c769dd29239_dict.csv', index_col=0)
+seg2 = pd.read_csv('2_dict.csv', index_col=0)
 print(len(seg2))
 segm2 = set(seg2.index)
 del seg2
 
-seg3 = pd.read_csv('63adb395698e7c769dd29233_dict.csv', index_col=0)
+seg3 = pd.read_csv('63aafd6cb004f7d13370ef81_dict.csv', index_col=0)
 segm3 = set(seg3.index)
 del seg3
 
