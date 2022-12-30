@@ -393,18 +393,21 @@ class TrendDetection:
         for row in bigrams_df.itertuples():
             pairs = row[2].split('/')
             # print(pairs)
-            # words = []
             tok = row[1]
             print(tok)
             if len(pairs) > 4: pairs = pairs[:4]
             print(pairs)
+            word_pairs = []
             for p in pairs:
                 # tok = p.split('_')[0]
                 words = TrendDetection.token_to_word(p, as_dict=False)
                 print(words)
                 print(int(tok))
-                pair_dict[int(tok)].append(words)
-                print(pair_dict)
+                # print(pair_dict)
+                print('appended!!!')
+                word_pairs.append(words)
+            pair_dict[int(tok)] = word_pairs
+            print(pair_dict)
         return pair_dict
                 
     
