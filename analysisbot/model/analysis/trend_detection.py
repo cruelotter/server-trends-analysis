@@ -446,9 +446,9 @@ class TrendDetection:
             
         print(df.round(2))
         
-        pair_dict = TrendDetection.get_bigrams(list(df.index))
+        # pair_dict = TrendDetection.get_bigrams(list(df.index))
         
-        return df.round(2), pair_dict
+        return df.round(2) #pair_dict
     
     
 if __name__=="__main__":
