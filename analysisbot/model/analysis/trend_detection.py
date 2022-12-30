@@ -395,6 +395,7 @@ class TrendDetection:
             # print(pairs)
             # words = []
             tok = row[0]
+            print(tok)
             if len(pairs) > 4: pairs = pairs[:3]
             for p in pairs:
                 # tok = p.split('_')[0]
