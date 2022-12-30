@@ -37,7 +37,7 @@ async def get_trends_manager(update: Update, context: ContextTypes.DEFAULT_TYPE)
     usr = UserManager.get_from_db(chat_id)
     _logger.warning([chat_id, usr.history_duration, usr.trend_period, usr.sources, usr.segment_id])
     pipeline = Pipeline(chat_id, usr.history_duration, usr.trend_period, usr.sources, usr.segment_id)
-    file, trends, bigrams = pipeline.run()
+    file, trends = pipeline.run()
     #!------
     # file, trends = threading.Thread(target=get_trends).start()
     #!------
