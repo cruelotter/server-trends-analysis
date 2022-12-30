@@ -122,6 +122,7 @@ async def set_default_3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     
 async def set_custom_4(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    days = []
     if update.message.text == "Каждый день":
         days = [1,2,3,4,5]
     elif update.message.text == "Пн Ср Пт":
