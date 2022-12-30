@@ -33,9 +33,9 @@ async def preset_segment(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return ConversationHandler.END
     SegmentManager.check_base(update.effective_chat.id)
-    segment_lst = SegmentManager.get_user_segments(update.effective_chat.id)
-    for segment in segment_lst:
-        print(segment['name'])
+    # segment_lst = SegmentManager.get_user_segments(update.effective_chat.id)
+    # for segment in segment_lst:
+    #     print(segment['name'])
     reply_keyboard = [[key['name']] for key in SegmentManager.get_user_segments(update.effective_chat.id)]
     reply_keyboard.append(['/cancel'])
     await update.message.reply_text(
