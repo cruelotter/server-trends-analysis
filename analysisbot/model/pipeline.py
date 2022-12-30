@@ -126,13 +126,13 @@ class Pipeline:
         
     
     def create_html(self, top: pd.DataFrame, bigrams):
-        html_head = '<!DOCTYPE html><html><head><title>Report</title><style>html * {font-family: Arial, Helvetica, sans-serif;margin-left: 50px;margin-right: 50px;max-width: 1500px;}</style></head>'
-        html_body = 'html<body>{}{}{}</body></html>'
+        html_head = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Report</title><style>html * {font-family: Arial, Helvetica, sans-serif;margin-left: 50px;margin-right: 50px;max-width: 1500px;}</style></head>'
+        html_body = '<body>{}{}{}</body></html>'
         page_str = '<div><h2>{}</h2><p>{}</p><img src="{}"/><h2>Примеры постов:</h2>{}</div>'
         # page_str = '<div><h2>{}</h2><img src="{}"/></div>'
         # post_str = '<h3>{}</h3><p>{}</p>'
         
-        _logger.warning('PDF is creating')
+        _logger.warning('html is creating')
         usr = UserManager.get_from_db(self.user_id)
         li_sources = ''
         for s in usr.sources.split():
@@ -178,7 +178,7 @@ class Pipeline:
         print('html created')
         
         pdfkit.from_file(f'{path}.html', f'{path}.pdf')
-
+        print("pdf created")
         return path
         
                    
