@@ -27,6 +27,7 @@ class ParserVK(parser.Parser):
     def get_history(self, chat_name, queue, segment_id, retry=True):
         data = []
         current_month = queue[-1]
+        flag = 0
         try:
             wall = vk_api.VkTools(self.session).get_all_iter(method='wall.get', max_count=10, values={'domain': chat_name})
             for wallpost in wall:
@@ -46,20 +47,24 @@ class ParserVK(parser.Parser):
                             'reactions': wallpost["likes"]["count"] + wallpost["comments"]["count"] + wallpost["reposts"]["count"]
                             })
                     elif post_date < queue[0]:
+                        flag += 1
+                    if flag > 4:
                         _logger.info(f"[ParserVK] {chat_name} {len(data)} parsed")
-                        break
-                except:
+                        break    
+                        
+                except Exception as e:
                     _logger.error(f'[ParserVK] {chat_name} fail to get data')
+                    _logger.error(e)
                     break
         except Exception as e:
             if str(e) == "[29] Rate limit reached":
                 _logger.error("[29] Rate limit reached")
-                import time
-                time.sleep(30)
-                if retry:
-                    data = self.get_history(self, chat_name, queue, segment_id, retry=False)
-                else:
-                    raise e
+            import time
+            time.sleep(30)
+            if retry:
+                data = self.get_history(self, chat_name, queue, segment_id, retry=False)
+            else:
+                raise e
         return data
         
         
