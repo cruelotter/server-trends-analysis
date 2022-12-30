@@ -390,8 +390,8 @@ class TrendDetection:
         pair_list = bigrams_df['pair'].to_list()
         # print(pair_list)
         pair_dict = dict.fromkeys(token_list, [])
-        for tok in pair_list:
-            pairs = tok.split('/')
+        for i in pair_list:
+            pairs = i.split('/')
             # print(pairs)
             # words = []
             if len(pairs) > 4: pairs = pairs[:3]

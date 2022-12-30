@@ -165,7 +165,8 @@ class Pipeline:
                         _logger.error("keyerror 'path'")
                 
             path = pathlib.Path(f"/home/server-trends-analysis/storage/img/img_{row[0]}.png").as_uri()
-            body += page_str.format(row[1],bigrams[int(row[0])], path, html_examples)
+            print(bigrams.keys(), bigrams[3216])
+            body += page_str.format(row[1], bigrams[int(row[0])], path, html_examples)
             print('ok')
         path = f"./storage/reports/report_{int(datetime.now().timestamp())}"
         
