@@ -3,7 +3,7 @@ from analysisbot.database.mongodb import MongoManager
 
 
 def token_to_word(ids, as_dict=True):
-        '''Метод для преобразования токена(id слова) в само слово в виде строки'''пше
+        '''Метод для преобразования токена(id слова) в само слово в виде строки'''
         word = ""
         doc = MongoManager.find_data('dictionary', {'_id': int(ids)})
         res =  doc['word']
