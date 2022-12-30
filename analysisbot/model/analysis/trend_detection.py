@@ -387,16 +387,17 @@ class TrendDetection:
         bigrams_df.drop(bigrams_df[~bigrams_df['token'].isin(token_list)].index, inplace=True)
         print(bigrams_df)
         # print("================================")
-        pair_list = bigrams_df['pair'].to_list()
+        # pair_list = bigrams_df['pair'].to_list()
         # print(pair_list)
         pair_dict = dict.fromkeys(token_list, [])
-        for i in pair_list:
-            pairs = i.split('/')
+        for row in bigrams_df.itertuples():
+            pairs = row[2].split('/')
             # print(pairs)
             # words = []
+            tok = row[0]
             if len(pairs) > 4: pairs = pairs[:3]
             for p in pairs:
-                tok = p.split('_')[0]
+                # tok = p.split('_')[0]
                 words = TrendDetection.token_to_word(p, as_dict=False)
                 pair_dict[int(tok)].append(words)
         print(pair_dict)
