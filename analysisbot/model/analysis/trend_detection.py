@@ -117,7 +117,7 @@ class TrendDetection:
     
     @staticmethod
     def rearrange_freq_only(df):
-        '''Преобразование таблицы в вид как в mcdm_score, но с ипользованием только частоты (без view, reactions)'''
+        '''Преобразование таблицы в вид как в mcdm_score, но с ипользованием только частоты (без views, reactions)'''
         tokens = df['token'].unique()
         tokens.sort()
         dates = df['date'].unique()
@@ -188,9 +188,10 @@ class TrendDetection:
 
     @staticmethod
     def mean_differance(sources: dict, current_date, period:int, remerge=True, mcdm=False) -> pd.DataFrame:
-        sum_means = TrendDetection.chunking(sources, current_date, period, remerge, mcdm)
+        sum_vals = TrendDetection.chunking(sources, current_date, period, remerge, mcdm)
         # print('sum_chunks 12310', sum_means['12310'])
-        sum_means = sum_means.mean(axis=0).to_frame(name='previous')
+        sum_means = sum_vals.mean(axis=0).to_frame(name='previous')
+        sum_means['sum_count'] = sum_vals.sum(axis=0)
         _logger.info('sum_means done')
 
         cur_mean = TrendDetection.chunking(sources, current_date+timedelta(days=30), 1, remerge, mcdm)
@@ -201,7 +202,7 @@ class TrendDetection:
         del sum_means
         del cur_mean
         compare.fillna(0.0, inplace=True)
-        
+        compare['sum_count'] += compare['current']
         return compare
 
 
@@ -416,10 +417,10 @@ class TrendDetection:
         TrendDetection.mean_score_ratio(df, 1)
         
         df.sort_values(by='growth', ascending=False, inplace=True)
-        df.to_csv(f'{seg_type}_dict.csv')
+        df.to_csv(f'storage/segment_vocab/{seg_type}.csv')
         df = df.iloc[:number]
         df['word'] = df.index.map(lambda x: TrendDetection.token_to_word(x, False))
-        df = df[['word', 'previous', 'current', 'growth']]
+        df = df[['word', 'previous', 'current', 'growth', 'sum_count']]
         
         all_stats: pd.DataFrame = None
         os.makedirs('storage/img', exist_ok=True)
